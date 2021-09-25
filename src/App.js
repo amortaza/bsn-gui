@@ -1,22 +1,14 @@
 import './App.css';
 import Header from './components/header.js'
 import Modules from './components/modules.js'
-import ListView from './list-view/list-view.js'
-
-import 'bootstrap/dist/css/bootstrap.min.css'
+import ListView from './features/list-view/list-view.js'
+// import 'bootstrap/dist/css/bootstrap.min.css'
 
 import Split from 'react-split'
 
-function App() {
 
-  let recs = [
-    {Table: "User", Field: "First Name", Type: "String" },
-    {Table: "User", Field: "Last Name", Type: "String" },
-    {Table: "User", Field: "Phone", Type: "String" },
-    {Table: "User", Field: "Active", Type: "True/False" },
-  ];
-
-  let headers = ['Table', 'Field', 'Type'];
+function App(props) {
+  let state = props.store.getState()
 
   return (
     <>
@@ -29,7 +21,7 @@ function App() {
         </div>
 
         <div>
-          <ListView headers={headers} recs={recs} />
+          <ListView headers={state.headers} recs={state.recs} />
         </div>
 
       </Split>
