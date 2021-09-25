@@ -1,5 +1,7 @@
+import { createSlice } from '@reduxjs/toolkit'
+
 const initialState = {
-    numOfCakes: 10,
+    cakes: 10,
     
     recs : [
         {Table: "User", Field: "First Name", Type: "String" },
@@ -11,4 +13,17 @@ const initialState = {
     headers : ['Table', 'Field', 'Type']
 }
 
-export default initialState
+const slice = createSlice({
+    name: 'listView',
+
+    initialState: initialState,
+
+    reducers: {
+      increment: state => {
+        state.numOfCakes += 1
+      },
+    }
+})
+
+export const { increment } = slice.actions
+export const { listViewReducer } = slice.reducer
