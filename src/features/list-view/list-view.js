@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useSelector } from 'react-redux';
-import {selectCount} from './counterSlice';
+import {selectCount} from './slice';
 
 export function Counter() {
   const count = useSelector(selectCount);
