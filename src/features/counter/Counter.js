@@ -1,16 +1,14 @@
 import React from 'react';
+
 import { useSelector } from 'react-redux';
-import {
-  selectCount,
-} from './counterSlice';
-import styles from './Counter.module.css';
+import {selectCount} from './counterSlice';
 
 export function Counter() {
   const count = useSelector(selectCount);
 
   return (
     <div>
-        <span className={styles.value}>{count}</span>
+        <span>{count}</span>
     </div>
   );
 }
