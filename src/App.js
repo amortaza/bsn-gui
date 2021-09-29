@@ -1,11 +1,11 @@
 import './App.css';
-import Header from './components/header.js'
-import Modules from './components/modules.js'
-import ListView from './features/list-view/list-view.js'
+import Header from './components/header'
+import Modules from './components/modules'
+import ListView from './features/list-view/list-view'
 import {ListViewState} from './features/list-view/slice'
 
 import Split from 'react-split'
-
+import 'bootstrap/dist/css/bootstrap.min.css'
 import { useSelector, useDispatch } from 'react-redux'
 
 function App() {
@@ -14,7 +14,6 @@ function App() {
   // const headers = useSelector((state)=>state.headers)
   // const dispatch = useDispatch()
 
-  console.log('******************************** hi');
   return (
     <>
       <Header />
