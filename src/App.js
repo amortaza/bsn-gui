@@ -1,22 +1,29 @@
+import { useSelector, useDispatch } from 'react-redux'
+import Split from 'react-split'
+
+import 'bootstrap/dist/css/bootstrap.min.css'
+
 import './App.css';
+
 import Header from './components/header'
 import Modules from './components/modules'
-import ListView from './features/list-view/list-view'
-import {ListViewState} from './features/list-view/slice'
 
-import Split from 'react-split'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { useSelector, useDispatch } from 'react-redux'
+import ListView from './features/list-view/list-view'
+import {GetListViewReducer} from './features/list-view/slice'
+import {GetAppReducer} from './app/slice'
+import {andone} from './features/list-view/slice'
+
 
 function App() {
-  const listviewState = useSelector( ListViewState )
-  // const recs = useSelector((state)=> state.recs)
-  // const headers = useSelector((state)=>state.headers)
-  // const dispatch = useDispatch()
+  const listviewState = useSelector( GetListViewReducer )
+  const appState = useSelector( GetAppReducer )
 
   return (
     <>
       <Header />
+
+      {/* {listviewState.value} / 
+      {appState.focusPage}  */}
 
       <Split className="split">
      

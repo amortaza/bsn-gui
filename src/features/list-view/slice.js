@@ -6,29 +6,26 @@ const initialState = {
   value: 3,
   
   recs : [
-      {Table: "User", Field: "First Name", Type: "String" },
-      {Table: "User", Field: "Last Name", Type: "String" },
-      {Table: "User", Field: "Phone", Type: "String" },
-      {Table: "User", Field: "Active", Type: "True/False" },
+      {Table2: "User", Field2: "First Name", Type2: "String" },
+      {Table2: "User", Field2: "Last Name", Type2: "String" },
+      {Table2: "User", Field2: "Phone", Type2: "String" },
+      {Table2: "User", Field2: "Active", Type2: "True/False" },
   ],
 
-  headers : ['Table', 'Field', 'Type']
+  headers : ['Table2', 'Field2', 'Type2']
 }
 
 export const slice = createSlice({
-  name: 'listView',
+  name: 'list-view-slice',
   initialState: initialState,
   reducers: {
     andone: (state) => {
       state.value++;
     }
-  }
+  },
 });
-
-
-export const ListViewState = state => state.ListView
 
 export const { andone } = slice.actions
 
 export const ListViewReducer = slice.reducer
-
+export const GetListViewReducer = state => state.ListViewReducer

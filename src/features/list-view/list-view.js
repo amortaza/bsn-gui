@@ -37,9 +37,9 @@ function ListView (props) {
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Table</StyledTableCell>
-            <StyledTableCell>Field</StyledTableCell>
-            <StyledTableCell>Type</StyledTableCell>
+            {headers.map( (header) => (
+              <StyledTableCell>{header}</StyledTableCell>
+            ) ) }
           </TableRow>
         </TableHead>
         <TableBody>
@@ -49,9 +49,9 @@ function ListView (props) {
               
             <StyledTableRow key={row.Table}>
 
-              <StyledTableCell component="th" scope="row">{row.Table}</StyledTableCell>
-              <StyledTableCell>{row.Field}</StyledTableCell>
-              <StyledTableCell>{row.Type}</StyledTableCell>
+              {headers.map( (header) => (
+                <StyledTableCell>{row[ header ]}</StyledTableCell>
+              ) ) }
 
             </StyledTableRow>
           ))}
