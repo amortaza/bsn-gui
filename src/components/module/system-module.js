@@ -1,12 +1,12 @@
 import * as React from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
-import MuiAccordionSummary, {
-  AccordionSummaryProps,
-} from '@mui/material/AccordionSummary';
+import MuiAccordionSummary, {AccordionSummaryProps} from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
+
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -15,6 +15,8 @@ import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
+
+import { gotoDictionary as gotoDictionary_action } from '../../app/slice'
 
 const style = {
     width: '100%',
@@ -25,6 +27,11 @@ const style = {
 
 export default function SystemModule() {
   const [expanded, setExpanded] = React.useState('panel1');
+  const dispatch = useDispatch()
+
+  function gotoDictionary() {
+    dispatch(gotoDictionary_action())
+  }
 
   const handleChange =
   // string React.SyntheticEvent boolean
@@ -68,32 +75,18 @@ const AccordionSummary = styled((props) => (
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
   borderTop: '1px solid rgba(0, 0, 0, .125)',
+  cursor: 'pointer'
+
 }));
 
 return (
     <div>
-        {/* <List sx={style} component="nav" aria-label="mailbox folders">
-        <ListItem button>
-            <ListItemText primary="Dictionary" />
-        </ListItem>
-        <Divider />
-        <ListItem button divider>
-            <ListItemText primary="Scripts" />
-        </ListItem>
-        <ListItem button>
-            <ListItemText primary="Security" />
-        </ListItem>
-        <Divider light />
-        <ListItem button>
-            <ListItemText primary="Logs" />
-        </ListItem>
-        </List> */}
 
         <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1d-content" id="panel1d-header">
             <Typography>System</Typography>
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails onClick={()=>gotoDictionary()}>
             <Typography>
               Dictionary
             </Typography>
@@ -154,24 +147,19 @@ return (
 
 
 
-
-      /* <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-          <Typography>System</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            Dictionary
-          </Typography>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
-        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-          <Typography>Settings</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            Comming soon...
-          </Typography>
-        </AccordionDetails>
-      </Accordion> */
+        /* <List sx={style} component="nav" aria-label="mailbox folders">
+        <ListItem button>
+            <ListItemText primary="Dictionary" />
+        </ListItem>
+        <Divider />
+        <ListItem button divider>
+            <ListItemText primary="Scripts" />
+        </ListItem>
+        <ListItem button>
+            <ListItemText primary="Security" />
+        </ListItem>
+        <Divider light />
+        <ListItem button>
+            <ListItemText primary="Logs" />
+        </ListItem>
+        </List> */

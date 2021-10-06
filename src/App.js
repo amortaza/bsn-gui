@@ -6,17 +6,18 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
 
 import Header from './components/header'
+import TheArea from './components/the-area'
 import Modules from './components/modules'
 
 import ListView from './features/list-view/list-view'
 import {GetListViewReducer} from './features/list-view/slice'
-import {GetAppReducer} from './app/slice'
+// import {GetAppReducer} from './app/___slice'
 import {andone} from './features/list-view/slice'
 
 
 function App() {
-  const listviewState = useSelector( GetListViewReducer )
-  const appState = useSelector( GetAppReducer )
+  // const listviewState = useSelector( GetListViewReducer )
+  // const appState = useSelector( GetAppReducer )
 
   return (
     <>
@@ -32,7 +33,8 @@ function App() {
         </div>
 
         <div>
-          <ListView headers={listviewState.headers} recs={listviewState.recs} />
+          {/* <ListView headers={listviewState.headers} recs={listviewState.recs} /> */}
+          <TheArea/>
         </div>
 
       </Split>

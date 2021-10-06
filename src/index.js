@@ -1,22 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { Provider } from "react-redux";
-import store from "./app/store";
-
 import "./index.css";
+
+import { Provider } from "react-redux";
+
+import store from "./app/store";
 import App from "./App";
 
-import { StyledEngineProvider } from '@mui/material/styles'
+// import { StyledEngineProvider } from '@mui/material/styles'
 
 ReactDOM.render(
   <Provider store={store}>
-    <StyledEngineProvider injectFirst>
+    {/* <StyledEngineProvider injectFirst> */}
     <App />
-    </StyledEngineProvider>
-  </Provider>,
+    {/* </StyledEngineProvider> */}
+  </Provider>
   
-  document.getElementById("root")
+  ,document.getElementById("root")
 );
 
 
