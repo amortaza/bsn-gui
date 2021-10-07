@@ -16,7 +16,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 
-import { gotoDictionary as gotoDictionary_action } from '../../app/slice'
+import { gotoListView as gotoListView_action } from '../../app/slice'
+import { gotoFormView as gotoFormView_action } from '../../app/slice'
 
 const style = {
     width: '100%',
@@ -29,8 +30,12 @@ export default function SystemModule() {
   const [expanded, setExpanded] = React.useState('panel1');
   const dispatch = useDispatch()
 
-  function gotoDictionary() {
-    dispatch(gotoDictionary_action())
+  function gotoListView( table ) {
+    dispatch(gotoListView_action( { table } ))
+  }
+
+  function gotoFormView( table, recordId ) {
+    dispatch(gotoFormView_action( { table, recordId } ))
   }
 
   const handleChange =
@@ -86,21 +91,21 @@ return (
           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1d-content" id="panel1d-header">
             <Typography>System</Typography>
           </AccordionSummary>
-          <AccordionDetails onClick={()=>gotoDictionary()}>
+          <AccordionDetails onClick={()=>gotoListView('x_schema')}>
             <Typography>
               Dictionary
             </Typography>
           </AccordionDetails>
 
-          <AccordionDetails>
+          <AccordionDetails onClick={()=>gotoListView('x_choice_list')}>
             <Typography>
-              Scripts
+              Choice List
             </Typography>
           </AccordionDetails>
 
-          <AccordionDetails>
+          <AccordionDetails onClick={()=>gotoFormView( 'x_choice_list', '0c8e07932620473ab290b781911dbe9f' )}>
             <Typography>
-              Security
+              Form View Choice List
             </Typography>
           </AccordionDetails>
 

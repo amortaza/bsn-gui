@@ -9,10 +9,10 @@ import Header from './components/header'
 import TheArea from './components/the-area'
 import Modules from './components/modules'
 
-import ListView from './features/list-view/list-view'
-import {GetListViewReducer} from './features/list-view/slice'
+// import ListView from './features/list-view/list-view'
+// import {GetListViewReducer} from './features/list-view/slice'
 // import {GetAppReducer} from './app/___slice'
-import {andone} from './features/list-view/slice'
+// import {andone} from './features/list-view/slice'
 
 
 function App() {

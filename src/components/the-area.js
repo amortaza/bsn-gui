@@ -4,36 +4,44 @@ import axios from 'axios'
 
 // import { Button } from 'react-bootstrap'
 
-import ListView from '../features/list-view/list-view'
+import ListView from './list-view/list-view'
+import Form from './form/form-view'
 
-import { selector as appSelector, gotoDictionary } from '../app/slice'
-// import { getAlertTitleUtilityClass } from '@mui/material'
+import { selector as appSelector } from '../app/slice'
 
 const TheArea = () => {
     const appState = useSelector( appSelector )
     const dispatch = useDispatch()
 
-    const [pageData, setPageData] = useState({header:[], rows:[]})
+    const [pageData_listView, setPageData_listView] = useState({header:[], rows: [] })
+    const [pageData_formView, setPageData_formView] = useState({ table:'none', formData: {} })
     
     useEffect( ()=> {
-
         if (!appState.focusPage) return
+        if ( appState.focusPage.type != 'listView') return
+
+        const page = appState.focusPage
         
-        axios.get( 'http://localhost:8000/table/x_schema/3d7380342fa24a889e6b7d798b826e37' )
+        axios.get( 'http://localhost:8000/table/' + page.table )
             .then( (res) => {
+                setPageData_listView( parseResult(res.data) )
 
-                setPageData( parseResult(res) )
-
-                function parseResult(res) { 
+                function parseResult(data) { 
                     var header = [];
                     var rows = [];
 
-                    for(var k in res.data) {
+                    console.log('data ******************** ' + JSON.stringify(data));
+
+                    if (data.length == 0) {
+                        return { header, rows };
+                    }
+
+                    for(var k in data[ 0 ]) {
                         header.push(k)
                     }
 
-                    for(var i = 0; i < 3; i++) {
-                        var row = {...res.data}
+                    for(var i = 0; i < data.length; i++) {
+                        var row = {...data[ i ]}
                         rows.push(row)
                     }
 
@@ -43,13 +51,39 @@ const TheArea = () => {
             .catch( (err) => {
                 console.log(err);  
             })
-    }, [appState.focusPage])
+    }, [appState.focusPage] )
+
+    useEffect( ()=> {
+        if (!appState.focusPage) return
+        if ( appState.focusPage.type != 'formView') return
+        if (!appState.focusPage.recordId) return
+
+        const page = appState.focusPage
+        
+        axios.get( 'http://localhost:8000/table/' + page.table + '/' + page.recordId )
+            .then( res => {                
+                setPageData_formView( {
+                    table: page.table,
+                    formData: res.data
+                } )
+            } )
+            .catch(console.log)
+
+    }, [appState.focusPage] )
+
+    let component
+    
+    if ( appState.focusPage.type == 'listView') {
+        component = <ListView headers={pageData_listView.header} recs={pageData_listView.rows} />
+    } else if ( appState.focusPage.type == 'formView') { 
+        component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />
+    } else {
+        component = <div>You are drunk! go home</div>
+    }
 
     return (
         <>
-        {/* {appState.focusPage} */}
-        {/* {pageData.header.length} */}
-        <ListView headers={pageData.header} recs={pageData.rows} />
+            {component}
         </>
     )
 }

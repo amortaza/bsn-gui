@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  focusPage: 'no focus'
+  focusPage: { type: 'no focus' }
 }
 
 export const slice = createSlice({
@@ -10,15 +10,26 @@ export const slice = createSlice({
   initialState,
 
   reducers: {
-    gotoDictionary: (state = initialState, action) => {
-      state.focusPage = 'dictionary'
+    gotoListView: (state = initialState, action) => {
+      state.focusPage = {
+        type: 'listView',
+        table: action.payload.table
+      }
+    },
+
+    gotoFormView: (state = initialState, action) => {
+      state.focusPage = {
+        type: 'formView',
+        table: action.payload.table,
+        recordId: action.payload.recordId
+      }
     }
   }
 });
 
 const { actions } = slice
 
-export const { gotoDictionary } = actions
+export const { gotoListView, gotoFormView } = actions
 
 export const reducer = slice.reducer
 export const selector = state => state.AppReducer
