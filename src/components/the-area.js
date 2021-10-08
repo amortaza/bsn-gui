@@ -15,7 +15,7 @@ const TheArea = () => {
 
     const [pageData_listView, setPageData_listView] = useState({header:[], rows: [] })
     const [pageData_formView, setPageData_formView] = useState({ table:'none', formData: {} })
-    
+
     useEffect( ()=> {
         if (!appState.focusPage) return
         if ( appState.focusPage.type != 'listView') return
@@ -74,7 +74,7 @@ const TheArea = () => {
     let component
     
     if ( appState.focusPage.type == 'listView') {
-        component = <ListView headers={pageData_listView.header} recs={pageData_listView.rows} />
+        // component = <ListView headers={pageData_listView.header} recs={pageData_listView.rows} />
     } else if ( appState.focusPage.type == 'formView') { 
         component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />
     } else {
