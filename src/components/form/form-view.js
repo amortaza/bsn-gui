@@ -10,30 +10,32 @@ props.table
 props.formData
 */
 const FormView = (props) => {
-    const formData = props.formData
 
-    console.log('BEFORE ******************** ' + JSON.stringify(formData));
-    const [formPostJSON, setFormPostJSON] = useState( ()=> { return formData } ) 
-    console.log('AFTER ******************** ' + JSON.stringify(formPostJSON));
-    
+    const [formToPost, setFormToPost] = useState( props.formData ) 
+
+    useEffect( () => {
+        setFormToPost( props.formData )
+    }, [ props.formData ])
+
     const saveForm = () => {
-        const formPostValues = JSON.parse( formPostJSON )
-
-        console.log('saving ******************** ' + JSON.stringify(formPostValues));
-
-
-        // axios.put( 'http://localhost:8000/table/' + props.table + '/' + formData.x_id, formPostValues )
-        //     .then( res => {                
-        //         console.log('******************** ' + JSON.stringify(res));
-        //     } )
-        //     .catch(console.log)
+        axios.put( 'http://localhost:8000/table/' + props.table + '/' + props.formData.x_id, formToPost )
+            .then( res => {                
+                console.log('******************** ' + JSON.stringify(res));
+            } )
+            .catch(console.log)
     }
 
-    const onChange = (value, field) => {
-        let map = JSON.parse( formPostJSON )
+    const onChange2 = (value, field) => {
+        console.log(`****************** ${field} ${value}`);
+        let map = {
+            ...formToPost
+        }
+
         map[ field ] = value
 
-        setFormPostJSON( JSON.stringify( map ) )
+        setFormToPost( map )
+
+
     }
 
     return (
@@ -41,15 +43,15 @@ const FormView = (props) => {
             
             <h1>{props.table}</h1>
 
-            {Object.keys(formData).map( field => {
+            {Object.keys(formToPost).map( field => {
 
-                const fieldValue = formData[ field ]
+                const fieldValue = formToPost[ field ]
 
                 return (
-                    <div style={{marginTop:"2em"}}>
+                    <div style={{marginTop:"2em"}} key={+new Date() + Math.random(10000)}>
                         <TextField 
-                            onChange={(e)=>{
-                                onChange(e.target.value, field)
+                            onBlur={(e)=>{
+                                onChange2(e.target.value, field)
                             }} 
                             id={field + '_id'} label={field} defaultValue={fieldValue} variant="standard" />
                     </div>

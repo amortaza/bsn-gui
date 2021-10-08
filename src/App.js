@@ -1,3 +1,5 @@
+/* eslint-disable */ 
+
 import { useSelector, useDispatch } from 'react-redux'
 import Split from 'react-split'
 
