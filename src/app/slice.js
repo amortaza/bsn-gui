@@ -17,11 +17,18 @@ export const slice = createSlice({
       }
     },
 
-    gotoFormView: (state = initialState, action) => {
+    gotoUpdateFormView: (state = initialState, action) => {
       state.focusPage = {
-        type: 'formView',
+        type: 'updateFormView',
         table: action.payload.table,
         recordId: action.payload.recordId
+      }
+    },
+
+    gotoNewFormView: (state = initialState, action) => {
+      state.focusPage = {
+        type: 'newFormView',
+        table: action.payload.table
       }
     }
   }
@@ -29,7 +36,7 @@ export const slice = createSlice({
 
 const { actions } = slice
 
-export const { gotoListView, gotoFormView } = actions
+export const { gotoListView, gotoNewFormView, gotoUpdateFormView } = actions
 
 export const reducer = slice.reducer
 export const selector = state => state.AppReducer

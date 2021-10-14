@@ -16,6 +16,7 @@ const TheArea = () => {
     const [pageData_listView, setPageData_listView] = useState({header:[], rows: [] })
     const [pageData_formView, setPageData_formView] = useState({ table:'none', formData: {} })
 
+    // listView
     useEffect( ()=> {
         if (!appState.focusPage) return
         if ( appState.focusPage.type != 'listView') return
@@ -53,9 +54,10 @@ const TheArea = () => {
             })
     }, [appState.focusPage] )
 
+    // updateFormView
     useEffect( ()=> {
         if (!appState.focusPage) return
-        if ( appState.focusPage.type != 'formView') return
+        if ( appState.focusPage.type != 'updateFormView') return
         if (!appState.focusPage.recordId) return
 
         const page = appState.focusPage
@@ -71,11 +73,46 @@ const TheArea = () => {
 
     }, [appState.focusPage] )
 
+    // newFormView
+    useEffect( ()=> {
+        
+        if (!appState.focusPage) return
+        if ( appState.focusPage.type != 'newFormView') return
+        
+        const page = appState.focusPage
+        
+        const buildFormData = (schema) => {
+            const form = {};
+            
+            for ( let i = 0; i < schema.length; i++) {
+                const e = schema[ i ]
+
+                form[ e.x_field ] = ""
+            }
+
+            return form
+        }
+
+        axios.get( 'http://localhost:8000/schema/' + page.table )
+            .then( res => {                
+                // alert(JSON.stringify(res.data));
+                setPageData_formView( {
+                    table: page.table,
+                    formData: buildFormData(res.data)
+                } )
+            } )
+            .catch(console.log)
+
+
+    }, [appState.focusPage] )
+
     let component
     
     if ( appState.focusPage.type == 'listView') {
         component = <ListView headers={pageData_listView.header} recs={pageData_listView.rows} />
-    } else if ( appState.focusPage.type == 'formView') { 
+    } else if ( appState.focusPage.type == 'updateFormView') { 
+        component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />
+    } else if ( appState.focusPage.type == 'newFormView') { 
         component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />
     } else {
         component = <div>You are drunk! go home</div>

@@ -8,6 +8,7 @@ import axios from 'axios'
 /*
 props.table
 props.formData
+props.isUpdateForm
 */
 const FormView = (props) => {
 
@@ -18,6 +19,14 @@ const FormView = (props) => {
     }, [ props.formData ])
 
     const saveForm = () => {
+        if (props.isUpdateForm) {
+            putFormToServer()
+        } else {
+            postFormToServer()
+        }
+    }
+
+    const putFormToServer = () => {
         axios.put( 'http://localhost:8000/table/' + props.table + '/' + props.formData.x_id, formToPost )
             .then( res => {                
                 console.log('******************** ' + JSON.stringify(res));
@@ -25,8 +34,17 @@ const FormView = (props) => {
             .catch(console.log)
     }
 
-    const onChange2 = (value, field) => {
+    const postFormToServer = () => {
+        axios.post( 'http://localhost:8000/table/' + props.table, formToPost )
+            .then( res => {                
+                console.log('******************** ' + JSON.stringify(res));
+            } )
+            .catch(console.log)
+    }
+
+    const onChange = (value, field) => {
         console.log(`****************** ${field} ${value}`);
+
         let map = {
             ...formToPost
         }
@@ -34,8 +52,6 @@ const FormView = (props) => {
         map[ field ] = value
 
         setFormToPost( map )
-
-
     }
 
     return (
@@ -51,7 +67,7 @@ const FormView = (props) => {
                     <div style={{marginTop:"2em"}} key={+new Date() + Math.random(10000)}>
                         <TextField 
                             onBlur={(e)=>{
-                                onChange2(e.target.value, field)
+                                onChange(e.target.value, field)
                             }} 
                             id={field + '_id'} label={field} defaultValue={fieldValue} variant="standard" />
                     </div>

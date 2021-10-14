@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { styled } from '@mui/material/styles';
@@ -17,7 +18,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 
 import { gotoListView as gotoListView_action } from '../../app/slice'
-import { gotoFormView as gotoFormView_action } from '../../app/slice'
+import { gotoUpdateFormView as gotoUpdateFormView_action } from '../../app/slice'
+import { gotoNewFormView as gotoNewFormView_action } from '../../app/slice'
 
 const style = {
     width: '100%',
@@ -34,8 +36,12 @@ export default function SystemModule() {
     dispatch(gotoListView_action( { table } ))
   }
 
-  function gotoFormView( table, recordId ) {
-    dispatch(gotoFormView_action( { table, recordId } ))
+  function gotoUpdateFormView( table, recordId ) {
+    dispatch(gotoUpdateFormView_action( { table, recordId } ))
+  }
+
+  function gotoNewFormView( table ) {
+    dispatch(gotoNewFormView_action( { table } ))
   }
 
   const handleChange =
@@ -103,15 +109,15 @@ return (
             </Typography>
           </AccordionDetails>
 
-          <AccordionDetails onClick={()=>gotoFormView( 'x_choice_list', '0c8e07932620473ab290b781911dbe9f' )}>
+          <AccordionDetails onClick={()=>gotoUpdateFormView( 'x_choice_list', '0c8e07932620473ab290b781911dbe9f' )}>
             <Typography>
-              Form View Choice List
+              Update Form View "Choice List"
             </Typography>
           </AccordionDetails>
 
-          <AccordionDetails>
+          <AccordionDetails onClick={()=>gotoNewFormView( 'x_choice_list' )}>
             <Typography>
-              Logs
+              New Form View "Choice List"
             </Typography>
           </AccordionDetails>
 
