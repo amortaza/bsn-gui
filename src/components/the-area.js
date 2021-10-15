@@ -4,8 +4,8 @@ import axios from 'axios'
 
 // import { Button } from 'react-bootstrap'
 
-import ListView from './list-view/list-view'
-import Form from './form/form-view'
+import ListView from './list-view'
+import Form from './form-view'
 
 import { selector as appSelector } from '../app/slice'
 

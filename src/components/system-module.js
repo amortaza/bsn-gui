@@ -17,9 +17,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 
-import { gotoListView as gotoListView_action } from '../../app/slice'
-import { gotoUpdateFormView as gotoUpdateFormView_action } from '../../app/slice'
-import { gotoNewFormView as gotoNewFormView_action } from '../../app/slice'
+import { gotoListView as gotoListView_action } from '../app/slice'
+import { gotoUpdateFormView as gotoUpdateFormView_action } from '../app/slice'
+import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
 
 const style = {
     width: '100%',

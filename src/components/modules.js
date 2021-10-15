@@ -2,7 +2,7 @@ import React from 'react'
 
 import './modules.css'
 
-import SystemModule from './module/system-module.js'
+import SystemModule from './system-module.js'
 
 const Modules = () => {
     
