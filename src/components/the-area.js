@@ -17,7 +17,7 @@ const TheArea = () => {
     const appState = useSelector( appSelector )
     const dispatch = useDispatch()
 
-    const [pageData_listView, setPageData_listView] = useState({header:[], rows: [] })
+    const [pageData_listView, setPageData_listView] = useState({table: '', header:[], rows: [] })
     const [pageData_formView, setPageData_formView] = useState({ table:'none', formData: {} })
 
     // listView
@@ -38,7 +38,7 @@ const TheArea = () => {
                     console.log('data ******************** ' + JSON.stringify(data));
 
                     if (data.length == 0) {
-                        return { header, rows };
+                        return { table: page.table, header, rows };
                     }
 
                     for(var k in data[ 0 ]) {
@@ -50,7 +50,7 @@ const TheArea = () => {
                         rows.push(row)
                     }
 
-                    return {header, rows}
+                    return {table: page.table, header, rows}
                 }
             } )
             .catch( (err) => {
@@ -119,7 +119,7 @@ const TheArea = () => {
         component = <DictionaryView />
 
     } else if ( appState.focusPage.type == 'listView') {
-        component = <ListView headers={pageData_listView.header} recs={pageData_listView.rows} />
+        component = <ListView table={pageData_listView.table} headers={pageData_listView.header} recs={pageData_listView.rows} />
 
     } else if ( appState.focusPage.type == 'updateFormView') { 
         component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />

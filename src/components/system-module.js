@@ -1,5 +1,6 @@
 /* eslint-disable */
 import * as React from 'react';
+import {useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -16,7 +17,8 @@ import Divider from '@mui/material/Divider';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
-
+import {useEffect} from 'react'
+import axios from 'axios'
 import { gotoListView as gotoListView_action } from '../app/slice'
 import { gotoUpdateFormView as gotoUpdateFormView_action } from '../app/slice'
 import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
@@ -30,7 +32,10 @@ const style = {
 
 
 export default function SystemModule() {
-  const [expanded, setExpanded] = React.useState('panel1');
+
+  const [expanded, setExpanded] = useState('panel1')
+  const [tables, setTables] = useState([])
+
   const dispatch = useDispatch()
 
   function gotoListView( table ) {
@@ -48,6 +53,38 @@ export default function SystemModule() {
   function gotoDictionaryView( table ) {
     dispatch(gotoDictionaryView_action( { table } ))
   }
+
+  function renderTables() { 
+    return tables.map( (table) => {
+      return (
+        <AccordionDetails onClick={()=>gotoListView(table)}>
+          <Typography>{table}</Typography>
+        </AccordionDetails>
+      )
+    })
+  }
+
+  useEffect( () => {
+
+    axios.get( 'http://localhost:8000/table/x_schema' )
+        .then( res => {   
+            const tables = res.data.reduce( (tables, schemaRec) => {
+                if (schemaRec.x_type == 'relation') {
+                    tables.push( schemaRec.x_table )                        
+                }
+
+                return tables
+            }, [])         
+            
+            setTables(tables)
+        } )
+        .catch(console.log)
+        // todo dialog box here
+}, [] )
+
+
+
+
 
   const handleChange =
   // string React.SyntheticEvent boolean
@@ -99,9 +136,11 @@ return (
     <div>
 
         <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+          
           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1d-content" id="panel1d-header">
             <Typography>System</Typography>
           </AccordionSummary>
+
           <AccordionDetails onClick={()=>gotoDictionaryView()}>
             <Typography>
               Dictionary
@@ -127,6 +166,20 @@ return (
           </AccordionDetails>
 
         </Accordion>
+
+
+        <Accordion expanded={expanded === 'panel_tables'} onChange={handleChange('panel_tables')}>
+
+          <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel-tables-content" id="panel-tables-header">
+            <Typography>Tables</Typography>
+          </AccordionSummary>
+
+          {renderTables()}
+
+        </Accordion> 
+
+
+
 
       <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2d-content" id="panel2d-header">
@@ -159,23 +212,3 @@ return (
 }
 
 
-
-
-
-
-        /* <List sx={style} component="nav" aria-label="mailbox folders">
-        <ListItem button>
-            <ListItemText primary="Dictionary" />
-        </ListItem>
-        <Divider />
-        <ListItem button divider>
-            <ListItemText primary="Scripts" />
-        </ListItem>
-        <ListItem button>
-            <ListItemText primary="Security" />
-        </ListItem>
-        <Divider light />
-        <ListItem button>
-            <ListItemText primary="Logs" />
-        </ListItem>
-        </List> */
