@@ -20,6 +20,7 @@ import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 import { gotoListView as gotoListView_action } from '../app/slice'
 import { gotoUpdateFormView as gotoUpdateFormView_action } from '../app/slice'
 import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
+import { gotoDictionaryView as gotoDictionaryView_action } from '../app/slice'
 
 const style = {
     width: '100%',
@@ -42,6 +43,10 @@ export default function SystemModule() {
 
   function gotoNewFormView( table ) {
     dispatch(gotoNewFormView_action( { table } ))
+  }
+
+  function gotoDictionaryView( table ) {
+    dispatch(gotoDictionaryView_action( { table } ))
   }
 
   const handleChange =
@@ -97,7 +102,7 @@ return (
           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1d-content" id="panel1d-header">
             <Typography>System</Typography>
           </AccordionSummary>
-          <AccordionDetails onClick={()=>gotoListView('x_schema')}>
+          <AccordionDetails onClick={()=>gotoDictionaryView()}>
             <Typography>
               Dictionary
             </Typography>

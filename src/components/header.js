@@ -7,8 +7,8 @@ const Header = () => {
 
     return (
         <nav className="navbar navbar-dark bg-primary">
-            <a className="navbar-brand">Baby ServiceNow!</a>
-            <Avatar alt="Remy Sharp" src="/golang.png" />
+            <a className="navbar-brand" style={{marginLeft:"1em"}}>Baby ServiceNow!</a>
+            <Avatar alt="Remy Sharp" src="/golang.png" style={{marginRight:"1em"}}/>
         </nav>
     )
 }

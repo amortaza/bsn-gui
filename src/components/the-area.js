@@ -1,11 +1,15 @@
+/* eslint-disable */
 import React, {useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
 // import { Button } from 'react-bootstrap'
 
-import ListView from './list-view'
+import DictionaryForm from './dictionary-form'
+import DictionaryView from './dictionary-view'
 import Form from './form-view'
+import ListView from './list-view'
+
 
 import { selector as appSelector } from '../app/slice'
 
@@ -108,12 +112,21 @@ const TheArea = () => {
 
     let component
     
-    if ( appState.focusPage.type == 'listView') {
+    if ( appState.focusPage.type == 'dictionaryForm') {
+        component = <DictionaryForm table={appState.focusPage.table} action={appState.focusPage.action} />
+
+    } else if ( appState.focusPage.type == 'dictionaryView') {
+        component = <DictionaryView />
+
+    } else if ( appState.focusPage.type == 'listView') {
         component = <ListView headers={pageData_listView.header} recs={pageData_listView.rows} />
+
     } else if ( appState.focusPage.type == 'updateFormView') { 
         component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />
+
     } else if ( appState.focusPage.type == 'newFormView') { 
         component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />
+
     } else {
         component = <div>You are drunk! go home</div>
     }
