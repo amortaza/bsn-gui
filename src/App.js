@@ -1,6 +1,5 @@
-/* eslint-disable */ 
+/* eslint-disable */
 
-import { useSelector, useDispatch } from 'react-redux'
 import Split from 'react-split'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -13,8 +12,6 @@ import Modules from './components/modules'
 
 
 function App() {
-  // const listviewState = useSelector( GetListViewReducer )
-  // const appState = useSelector( GetAppReducer )
 
   return (
     <>
@@ -30,7 +27,6 @@ function App() {
         </div>
 
         <div>
-          {/* <ListView headers={listviewState.headers} recs={listviewState.recs} /> */}
           <TheArea/>
         </div>
 

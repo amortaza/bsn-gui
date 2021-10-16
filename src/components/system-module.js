@@ -147,23 +147,20 @@ return (
             </Typography>
           </AccordionDetails>
 
-          <AccordionDetails onClick={()=>gotoListView('x_choice_list')}>
+          {/* <AccordionDetails onClick={()=>gotoListView('x_choice_list')}>
             <Typography>
               Choice List
             </Typography>
-          </AccordionDetails>
+          </AccordionDetails> */}
 
-          <AccordionDetails onClick={()=>gotoUpdateFormView( 'x_choice_list', '0c8e07932620473ab290b781911dbe9f' )}>
-            <Typography>
+          {/* <AccordionDetails onClick={()=>gotoUpdateFormView( 'x_choice_list', '0c8e07932620473ab290b781911dbe9f' )}>
               Update Form View "Choice List"
-            </Typography>
-          </AccordionDetails>
 
           <AccordionDetails onClick={()=>gotoNewFormView( 'x_choice_list' )}>
             <Typography>
               New Form View "Choice List"
             </Typography>
-          </AccordionDetails>
+          </AccordionDetails> */}
 
         </Accordion>
 
@@ -181,7 +178,7 @@ return (
 
 
 
-      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+      {/* <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2d-content" id="panel2d-header">
           <Typography>Incidents</Typography>
         </AccordionSummary>
@@ -195,9 +192,9 @@ return (
             My Incidents
           </Typography>
         </AccordionDetails>
-      </Accordion> 
+      </Accordion>  */}
 
-      <Accordion disabled>
+      {/* <Accordion disabled>
       <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel3a-content"
@@ -205,7 +202,7 @@ return (
         >
           <Typography>Bitcoin Wallets</Typography>
         </AccordionSummary>
-      </Accordion>
+      </Accordion> */}
 
     </div>
   );

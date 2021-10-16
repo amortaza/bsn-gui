@@ -22,6 +22,8 @@ import CardContent from '@mui/material/CardContent';
 import axios from 'axios'
 import { Save } from '@mui/icons-material';
 import AddField from '../widget/add-field';
+import api_getTableFields from '../api/get_table_fields'
+import api_deleteField from '../api/delete_field'
 
 /*
 table
@@ -29,13 +31,35 @@ action: create / update
 */
 const DictionaryForm = (props) => {
 
-    const [fields, setFields] = useState( [ {name: "x_id", type: "String"}, {name: "x_name", type: "Number"}, {name: "x_age", type: "Bool"} ] ) 
-    const [table, setTable] = useState( [ props.table ] ) 
-    const [action, setAction] = useState( [ props.action ] ) 
+    const [fields, setFields] = useState( [] ) 
+    const [table, setTable] = useState( props.table ) 
+    const [action, setAction] = useState( props.action ) 
+
+    useEffect(() => {
+        setTable(props.table)
+        setAction(props.action)
+    }, [props.table, props.action])
+
+    useEffect( () => {
+        api_getTableFields(table, (fields) => {
+            setFields(fields)
+        })
+    }, [])
 
     const css = {
         display: 'inline-block',
         "vertical-align":'top',
+    }
+
+    function deleteField(fieldToDelete) { 
+
+        api_deleteField( table, fieldToDelete, () => {
+            const newFields = fields.filter((field) => {
+                return field.name != fieldToDelete
+            })
+
+            setFields(newFields)
+        })
     }
 
     function addField(field, type) { 
@@ -85,13 +109,13 @@ const DictionaryForm = (props) => {
         return fields.map( (field) => {
             return (
                 <div style={css2} key={field.name}>
-                    {/* <div style={css}>
-                        <Button style={css3} size="small" variant="outlined" color="error" onClick={() => {
-                            //gotoDictionaryForm("")
+                    <div style={css}>
+                        <Button style={css3} size="small" variant="outlined" color="error" disabled={field.name == 'x_id'} onClick={() => {
+                            deleteField(field.name)
                         }}>
                         Delete Field
                         </Button>   
-                    </div> */}
+                    </div>
 
                     <div style={css}>
                         <Typography>

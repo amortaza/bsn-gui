@@ -1,5 +1,5 @@
-import React from 'react'
-
+import React, { useEffect } from 'react'
+import {useState} from 'react'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 
@@ -30,6 +30,7 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import { gotoUpdateFormView as gotoUpdateFormView_action } from '../app/slice'
 import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
+import api_deleteRecord from 'src/api/delete_record';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -57,10 +58,17 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   props.recs
   */
 const ListView = (props) => {
+    const [recs, setRecs] = useState( props.recs )
+    // const recs = props.recs
+
     const dispatch = useDispatch()
 
     let headers = props.headers;
-    let recs = props.recs;
+
+    useEffect(() => {
+      setRecs(props.recs)
+    }, [props.recs])
+
 
     function gotoUpdateFormView( table, recordId ) {
       dispatch(gotoUpdateFormView_action( { table, recordId } ))
@@ -68,6 +76,17 @@ const ListView = (props) => {
     
     function gotoNewFormView( table ) {
       dispatch(gotoNewFormView_action( { table } ))
+    }
+
+    function deleteRecord(table, xid) { 
+      api_deleteRecord(table, xid, () => {
+        
+        let newRecs = recs.filter( (rec) => {
+          return rec.x_id != xid;
+        })
+
+        setRecs( newRecs )
+      })
     }
 
     return (
@@ -78,28 +97,48 @@ const ListView = (props) => {
 
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
+
               <TableHead>
                 <TableRow>
+                  <StyledTableCell></StyledTableCell>
+                  <StyledTableCell></StyledTableCell>
+
                   {headers.map( (header) => (
                     <StyledTableCell>{header}</StyledTableCell>
                   ) ) }
                 </TableRow>
               </TableHead>
+
               <TableBody>
-                  {/* align="right" */}
 
                 {recs.map((row) => (
                     
                   <StyledTableRow key={row.Table}>
 
+                    <StyledTableCell>
+                      <Button variant="outlined" size="small" color="primary" onClick={() => {
+                          gotoUpdateFormView( props.table, row.x_id )
+                      }}>Edit</Button>   
+
+                    </StyledTableCell>
+
+                    <StyledTableCell>
+                      <Button variant="outlined" size="small" color="error" onClick={() => {
+                          deleteRecord(props.table, row.x_id)
+                      }}>Delete</Button>   
+
+                    </StyledTableCell>
+
                     {headers.map( (header) => (
-                      <StyledTableCell>{row[ header ]}</StyledTableCell>
+                      <StyledTableCell>{row[ header ] + ''}</StyledTableCell>
                     ) ) }
 
                   </StyledTableRow>
                 ))}
               </TableBody>
+
             </Table>
+
         </TableContainer>
       </>
     )

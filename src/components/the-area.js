@@ -10,6 +10,8 @@ import DictionaryView from './dictionary-view'
 import Form from './form-view'
 import ListView from './list-view'
 
+import api_getTableByQuery from '../api/get_table_by_query'
+import api_getTableFields from '../api/get_table_fields'
 
 import { selector as appSelector } from '../app/slice'
 
@@ -26,36 +28,21 @@ const TheArea = () => {
         if ( appState.focusPage.type != 'listView') return
 
         const page = appState.focusPage
+
+        api_getTableByQuery(page.table, (header, rows) => {
+            if (header.length > 0) {
+                setPageData_listView( {table: page.table, header, rows} )
+            }
+            else {
+                api_getTableFields(page.table, (fields) => {
+                    const header = fields.map((field) => {
+                        return field.name
+                    })
+                    setPageData_listView( {table: page.table, header, rows} )
+                })
+            }
+        })
         
-        axios.get( 'http://localhost:8000/table/' + page.table )
-            .then( (res) => {
-                setPageData_listView( parseResult(res.data) )
-
-                function parseResult(data) { 
-                    var header = [];
-                    var rows = [];
-
-                    console.log('data ******************** ' + JSON.stringify(data));
-
-                    if (data.length == 0) {
-                        return { table: page.table, header, rows };
-                    }
-
-                    for(var k in data[ 0 ]) {
-                        header.push(k)
-                    }
-
-                    for(var i = 0; i < data.length; i++) {
-                        var row = {...data[ i ]}
-                        rows.push(row)
-                    }
-
-                    return {table: page.table, header, rows}
-                }
-            } )
-            .catch( (err) => {
-                console.log(err);  
-            })
     }, [appState.focusPage] )
 
     // updateFormView
