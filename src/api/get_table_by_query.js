@@ -5,6 +5,7 @@ const api_getTableByQuery = (table, pageIndex, pageSize, cb) => {
 
     axios.get( `http://localhost:8000/table/${table}?index=${pageIndex}&size=${pageSize}` )
     .then( (res) => {
+        console.log('******************** ' , res);
         const header = []
         const rows = []
         const data = res.data
@@ -22,7 +23,7 @@ const api_getTableByQuery = (table, pageIndex, pageSize, cb) => {
             rows.push(row)
         }
 
-        cb( header, rows )
+        cb( header, rows, parseInt( res.headers['x-total-count'], 10 ) )
     } )
     .catch( (err) => {
         alert(err)

@@ -10,10 +10,11 @@ import {useEffect} from 'react'
 
   /*
   props.setListPagination( pageIndex, pageSize )
+  props.total
   */
 const Pagination = (props) => {
     const [pageIndex, setPageIndex] = useState( 1 )
-    const [pageSize, setPageSize] = useState( 2 )
+    const [pageSize, setPageSize] = useState( 2 )    
 
     const dispatch = useDispatch()
 
@@ -27,16 +28,20 @@ const Pagination = (props) => {
 
     useEffect(() => {
         props.setListPagination( pageIndex, pageSize )
+        
     }, [pageIndex])
+
+    let maxPageIndex = Math.ceil( props.total / pageSize )
+    let label = pageIndex + ' of ' + maxPageIndex
 
     return (
         <Stack direction="row" spacing={1} style={{marginTop:"1em", marginBottom:"2em", marginLeft:"1em"}}>
 
-            <Button variant="contained" onClick={prevPage}>Previous</Button>   
+            <Button variant="contained" disabled={pageIndex==1} onClick={prevPage}>Previous</Button>   
 
-            <Chip label={pageIndex} variant="filled" style={{marginTop:"0.3em", marginLeft:"1em", marginRight:"1em"}}/>
+            <Chip label={label} variant="filled" style={{marginTop:"0.3em", marginLeft:"1em", marginRight:"1em"}}/>
 
-            <Button variant="contained" onClick={nextPage}>Next</Button>   
+            <Button variant="contained" disabled={pageIndex >= maxPageIndex} onClick={nextPage}>Next</Button>   
 
         </Stack>
     )

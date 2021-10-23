@@ -19,7 +19,7 @@ const TheArea = () => {
     const appState = useSelector( appSelector )
     const dispatch = useDispatch()
 
-    const [pageData_listView, setPageData_listView] = useState({table: '', header:[], rows: [] })
+    const [pageData_listView, setPageData_listView] = useState({table: '', header:[], rows: [], total: 0 })
     const [pageData_formView, setPageData_formView] = useState({ table:'none', formData: {} })
 
     const [pageIndex, setPageIndex] = useState(1)
@@ -36,16 +36,16 @@ const TheArea = () => {
 
         const page = appState.focusPage
 
-        api_getTableByQuery(page.table, (pageIndex-1) * pageSize, pageSize, (header, rows) => {
+        api_getTableByQuery(page.table, (pageIndex-1) * pageSize, pageSize, (header, rows, total) => {
             if (header.length > 0) {
-                setPageData_listView( {table: page.table, header, rows} )
+                setPageData_listView( {table: page.table, header, rows, total} )
             }
             else {
                 api_getTableFields(page.table, (fields) => {
                     const header = fields.map((field) => {
                         return field.name
                     })
-                    setPageData_listView( {table: page.table, header, rows} )
+                    setPageData_listView( {table: page.table, header, rows, total} )
                 })
             }
         })
@@ -113,7 +113,7 @@ const TheArea = () => {
         component = <DictionaryView />
 
     } else if ( appState.focusPage.type == 'listView') {
-        component = <ListView table={pageData_listView.table} headers={pageData_listView.header} recs={pageData_listView.rows} setListPagination={setListPagination} />
+        component = <ListView table={pageData_listView.table} headers={pageData_listView.header} recs={pageData_listView.rows} total={pageData_listView.total} setListPagination={setListPagination} />
 
     } else if ( appState.focusPage.type == 'updateFormView') { 
         component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />

@@ -48,6 +48,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     props.pageSize
     props.pageIndex
 
+    props.total
+
     props.setListPagination( index, size )
   */
 const ListView = (props) => {
@@ -137,7 +139,7 @@ const ListView = (props) => {
 
         </TableContainer>
 
-        <Pagination setListPagination={setListPagination} />
+        <Pagination setListPagination={setListPagination} total={props.total} />
       </>
     )
 }
