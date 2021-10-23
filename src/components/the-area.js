@@ -22,6 +22,13 @@ const TheArea = () => {
     const [pageData_listView, setPageData_listView] = useState({table: '', header:[], rows: [] })
     const [pageData_formView, setPageData_formView] = useState({ table:'none', formData: {} })
 
+    const [pageIndex, setPageIndex] = useState(1)
+    const [pageSize, setPageSize] = useState(2)
+
+    function setListPagination(index, size) {
+        setPageIndex( index )
+    }
+
     // listView
     useEffect( ()=> {
         if (!appState.focusPage) return
@@ -29,7 +36,7 @@ const TheArea = () => {
 
         const page = appState.focusPage
 
-        api_getTableByQuery(page.table, (header, rows) => {
+        api_getTableByQuery(page.table, (pageIndex-1) * pageSize, pageSize, (header, rows) => {
             if (header.length > 0) {
                 setPageData_listView( {table: page.table, header, rows} )
             }
@@ -43,7 +50,7 @@ const TheArea = () => {
             }
         })
         
-    }, [appState.focusPage] )
+    }, [appState.focusPage, pageIndex] )
 
     // updateFormView
     useEffect( ()=> {
@@ -106,7 +113,7 @@ const TheArea = () => {
         component = <DictionaryView />
 
     } else if ( appState.focusPage.type == 'listView') {
-        component = <ListView table={pageData_listView.table} headers={pageData_listView.header} recs={pageData_listView.rows} />
+        component = <ListView table={pageData_listView.table} headers={pageData_listView.header} recs={pageData_listView.rows} setListPagination={setListPagination} />
 
     } else if ( appState.focusPage.type == 'updateFormView') { 
         component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />

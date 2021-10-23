@@ -1,21 +1,6 @@
 import React, { useEffect } from 'react'
 import {useState} from 'react'
-import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import Box from '@mui/material/Box';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -26,10 +11,13 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { gotoUpdateFormView as gotoUpdateFormView_action } from '../app/slice'
 import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
+
+import Pagination from './pagination'
+
 import api_deleteRecord from 'src/api/delete_record';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -53,13 +41,17 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   }));
 
   /*
-  props.table
-  props.headers
-  props.recs
+    props.table
+    props.headers
+    props.recs
+
+    props.pageSize
+    props.pageIndex
+
+    props.setListPagination( index, size )
   */
 const ListView = (props) => {
     const [recs, setRecs] = useState( props.recs )
-    // const recs = props.recs
 
     const dispatch = useDispatch()
 
@@ -87,6 +79,10 @@ const ListView = (props) => {
 
         setRecs( newRecs )
       })
+    }
+
+    function setListPagination(pageIndex, pageSize) {
+      props.setListPagination(pageIndex, pageSize)      
     }
 
     return (
@@ -140,6 +136,8 @@ const ListView = (props) => {
             </Table>
 
         </TableContainer>
+
+        <Pagination setListPagination={setListPagination} />
       </>
     )
 }

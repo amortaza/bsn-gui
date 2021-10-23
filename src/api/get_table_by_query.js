@@ -1,9 +1,9 @@
 /* eslint-disable */
 import axios from 'axios'
 
-const api_getTableByQuery = (table, cb) => {
+const api_getTableByQuery = (table, pageIndex, pageSize, cb) => {
 
-    axios.get( `http://localhost:8000/table/${table}` )
+    axios.get( `http://localhost:8000/table/${table}?index=${pageIndex}&size=${pageSize}` )
     .then( (res) => {
         const header = []
         const rows = []
