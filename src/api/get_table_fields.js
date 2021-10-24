@@ -15,7 +15,7 @@ const api_getTableFields = (table, cb) => {
 
         for (let i = 0; i < data.length; i++) {
             var field = data[ i ]
-            fields.push( { name: field.x_field, type: field.x_field_type } )
+            fields.push( { name: field.x_field, type: field.x_field_type, label: field.x_label } )
         }
 
         cb( fields )

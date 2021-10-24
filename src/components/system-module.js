@@ -55,10 +55,10 @@ export default function SystemModule() {
   }
 
   function renderTables() { 
-    return tables.map( (table) => {
+    return tables.map( ({table, tableLabel}) => {
       return (
         <AccordionDetails onClick={()=>gotoListView(table)}>
-          <Typography>{table}</Typography>
+          <Typography>{tableLabel} ( {table} ) </Typography>
         </AccordionDetails>
       )
     })
@@ -70,7 +70,7 @@ export default function SystemModule() {
         .then( res => {   
             const tables = res.data.reduce( (tables, schemaRec) => {
                 if (schemaRec.x_type == 'relation') {
-                    tables.push( schemaRec.x_table )                        
+                    tables.push( { table: schemaRec.x_table, tableLabel: schemaRec.x_label } )
                 }
 
                 return tables

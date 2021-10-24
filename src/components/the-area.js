@@ -43,7 +43,7 @@ const TheArea = () => {
             else {
                 api_getTableFields(page.table, (fields) => {
                     const header = fields.map((field) => {
-                        return field.name
+                        return field.label
                     })
                     setPageData_listView( {table: page.table, header, rows, total} )
                 })
