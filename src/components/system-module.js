@@ -38,16 +38,17 @@ export default function SystemModule() {
 
   const dispatch = useDispatch()
 
-  function gotoListView( table ) {
-    dispatch(gotoListView_action( { table } ))
+  function gotoListView( table, tableLabel ) {
+    // console.log('****************** going to list view with table ' + table);
+    dispatch(gotoListView_action( { table, tableLabel } ))
   }
 
   function gotoUpdateFormView( table, recordId ) {
     dispatch(gotoUpdateFormView_action( { table, recordId } ))
   }
 
-  function gotoNewFormView( table ) {
-    dispatch(gotoNewFormView_action( { table } ))
+  function gotoNewFormView( table, tableLabel ) {
+    dispatch(gotoNewFormView_action( { table, tableLabel } ))
   }
 
   function gotoDictionaryView( table ) {
@@ -57,7 +58,7 @@ export default function SystemModule() {
   function renderTables() { 
     return tables.map( ({table, tableLabel}) => {
       return (
-        <AccordionDetails onClick={()=>gotoListView(table)}>
+        <AccordionDetails onClick={()=>gotoListView(table, tableLabel)}>
           <Typography>{tableLabel} ( {table} ) </Typography>
         </AccordionDetails>
       )

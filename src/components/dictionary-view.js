@@ -14,40 +14,46 @@ import Box from '@mui/material/Box';
 import axios from 'axios'
 
 import { gotoDictionaryForm as gotoDictionaryForm_action } from '../app/slice'
+import api_getTableFields from '../api/get_table_fields'
+import {historyRewind as historyRewind_action} from '../app/slice'
 
 /*
 */
-const DictionaryView = (props) => {
+const DictionaryView = () => {
 
-    const [tables, setTables] = useState( [] ) 
+    // tableDefs = [ { table, label } ... ]
+    const [tableDefs, setTableDefs] = useState( [] ) 
     const [filter, setFilter] = useState( '' ) 
     const dispatch = useDispatch()
 
     useEffect( () => {
         axios.get( 'http://localhost:8000/table/x_schema' )
             .then( res => {   
-                const tables = res.data.reduce( (tables, schemaRec) => {
+
+                // defs = [ table...]
+                const defs = res.data.reduce( (tables, schemaRec) => {
+
                     if (schemaRec.x_type == 'relation') {
-                        tables.push( schemaRec.x_table )                        
+                        tables.push( {table: schemaRec.x_table, label: schemaRec.x_label} )
                     }
 
                     return tables
                 }, [])         
-                
-                setTables(tables)
+
+                setTableDefs(defs)
             } )
             .catch(console.log)
             // todo dialog box here
     }, [] )
  
+    const historyRewind = () => {
+        dispatch(historyRewind_action())
+    }
+
     const onChange = (e) => {
         setFilter( e.target.value )
     }
 
-    const style = {
-        maxWidth: "8em",
-    }  
-    
     const gotoDictionaryForm  = (table) => {
         const params =  {
             action: table == "" ? "create" : "update",
@@ -58,15 +64,15 @@ const DictionaryView = (props) => {
     }
 
     const renderTables = () => {
-        return tables.map( (table) => {
-            if (table.indexOf(filter) > -1) {
+        return tableDefs.map( ({table, label}) => {
+            if (table.indexOf(filter) > -1 || label.indexOf(filter) > -1) {
                 return (
                     <div key={table}>
                         <ListItem button onClick={() => {
                                 gotoDictionaryForm(table)
                             }}>
 
-                            <ListItemText primary={table}  />
+                            <ListItemText primary={label + ' ( ' + table + ' ) '}  />
                         </ListItem>
                         <Divider />
                     </div>
@@ -76,20 +82,24 @@ const DictionaryView = (props) => {
     }
 
     return (
-        <div style={{padding:"1em"}}>
+        <div style={{padding:"1em"}} >
             <h2>Dictionary</h2>
 
-            <Button style={{marginTop:"1em", marginBottom:"3em"}} variant="contained" onClick={() => {
-                gotoDictionaryForm("")
-            }}>New Table</Button>   
+            <div style={{marginTop:"1em", marginBottom:"3em"}}>
+                {/* New Button */}
+                <Button style={{}} variant="contained" onClick={() => {
+                    gotoDictionaryForm("")
+                }}>New Table</Button>   
 
-            <br/>
+                {/* Cancel Button */}
+                <Button style={{marginLeft:"1em"}} onClick={historyRewind} variant="contained" >Cancel</Button>   
+            </div>
 
             <TextField id="filter" label="Filter" variant="outlined" onChange={onChange} defaultValue={filter} />
 
             <div style={{height:"1em"}} />
 
-            <List sx={style} component="nav" aria-label="mailbox folders">
+            <List component="nav" aria-label="mailbox folders">
                 {renderTables()}
             </List>            
 

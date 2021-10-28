@@ -9,17 +9,24 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 
 /*
-props.AddField( field, fieldType)
+props.AddField( field, label, fieldType)
 */
 const AddField = (props) => {
 
     const [field, setField] = useState( "" ) 
+    const [label, setLabel] = useState( "" ) 
     const [fieldType, setFieldType] = useState( "String" ) 
 
     return (
-        <div>
-            <TextField label="Field Name" defaultValue=""  style={{marginBottom:"3em"}} onChange={(e) => {
-                setField(e.target.value)
+        <div >
+            <TextField label="Label" defaultValue=""  variant="standard" 
+                onChange={(e) => {
+                    setLabel(e.target.value)
+             }} />  
+
+            <TextField label="Field Name" defaultValue=""  variant="standard" style={{marginLeft:"1em"}} 
+                onChange={(e) => {
+                    setField(e.target.value)
              }} />  
 
 
@@ -28,6 +35,8 @@ const AddField = (props) => {
                 id="demo-simple-select"
                 value={fieldType}
                 label="Field Type"
+                style={{marginLeft:"1em",marginTop:"0.8em"}}
+                variant="standard"
                 onChange={(e) => {
                     setFieldType(e.target.value)
                 }}
@@ -37,8 +46,10 @@ const AddField = (props) => {
                 <MenuItem value="Bool">True / False</MenuItem>
             </Select>
 
+            
+
             <Button style={{marginLeft:"1em"}} variant="outlined" onClick={() => {
-                props.AddField( field, fieldType)
+                props.AddField( field, label, fieldType)
             }}>Add Field</Button> 
 
         </div>

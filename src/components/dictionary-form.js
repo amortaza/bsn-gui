@@ -24,12 +24,15 @@ import { Save } from '@mui/icons-material';
 import AddField from '../widget/add-field';
 import api_getTableFields from '../api/get_table_fields'
 import api_deleteField from '../api/delete_field'
+import {historyRewind as historyRewind_action, appMsg} from '../app/slice'
 
+ 
 /*
 table
 action: create / update
 */
 const DictionaryForm = (props) => {
+    const dispatch = useDispatch()
 
     const [fields, setFields] = useState( [] ) 
     const [table, setTable] = useState( props.table ) 
@@ -41,60 +44,75 @@ const DictionaryForm = (props) => {
     }, [props.table, props.action])
 
     useEffect( () => {
-        api_getTableFields(table, (fields) => {
-            setFields(fields)
-        })
-    }, [])
+
+        if (table) {
+            // cb( fields [] {name, type, label} ) api_getTableFields.v1
+            api_getTableFields(table, (fields) => {
+                setFields(fields)
+            })
+        }
+
+    }, [props.table])
 
     const css = {
         display: 'inline-block',
         "vertical-align":'top',
     }
 
+
     function deleteField(fieldToDelete) { 
 
-        api_deleteField( table, fieldToDelete, () => {
+        api_deleteField( table, fieldToDelete, dispatch, () => {
             const newFields = fields.filter((field) => {
                 return field.name != fieldToDelete
             })
 
             setFields(newFields)
+
+            appMsg("info", "Deleted field successfully!", dispatch)
         })
     }
 
-    function addField(field, type) { 
-        axios.post( `http://localhost:8000/schema/table/${table}/field/${field}`, {type} )
+    function addField(field, label, type) { 
+        axios.post( `http://localhost:8000/schema/table/${table}/field/${field}`, {type, label} )
             .then( res => {    
                 if ( res.status != 200 ) {
-                    alert('post to create table failed ' + res.status)
+                    console.log('******************** ' + JSON.stringify(res));
+                    appMsg("error", "Fail, see " + res.status, dispatch )
                 } else {
                     setFields( [
                         ...fields,
-                        {name:field, type}
+                        {name:field, label, type}
                     ] )
+
+                    appMsg("info", "Created field successfully!", dispatch)
                 }
             } )
             .catch((e) => {
-                alert(e)
-                console.log(e)
+                console.log('****************** ' + e);
+                appMsg("error", "Fail, see " + e, dispatch );
             })
-            // todo make this a dialog
     }
 
     function createTable() { 
         axios.post( 'http://localhost:8000/schema/' + table, {fields:[]} )
             .then( res => {    
                 if ( res.status != 200 ) {
-                    alert('post to create table failed ' + res.status)
+                    appMsg("error", "Failed to create table, see " + JSON.stringify(res), dispatch )
+
                 } else {
                     setAction('update')
+                    appMsg('info', 'Created table successfully!', dispatch)
                 }
             } )
             .catch((e) => {
-                alert(e)
-                console.log(e)
+                console.log('****************** ' + e);
+                appMsg("error", "Failed to create table, see " + e, dispatch );
             })
-            // todo make this a dialog
+    }
+
+    const historyRewind = () => {
+        dispatch(historyRewind_action())
     }
 
     const css2 = {
@@ -119,7 +137,7 @@ const DictionaryForm = (props) => {
 
                     <div style={css}>
                         <Typography>
-                        {field.name} ( {field.type} )
+                        <b>{field.label}</b> ( {field.name} : {field.type} )
                         </Typography>
                     </div>
                 </div>
@@ -130,15 +148,18 @@ const DictionaryForm = (props) => {
     return (
         <div style={{padding:"1em"}}>
 
-            <TextField label="Table Name" defaultValue={props.table} disabled={action=="update"} style={{marginBottom:"2em"}} onChange={(e) => {
-                setTable(e.target.value)
+            <TextField label="Table Name" defaultValue={props.table} disabled={action=="update"} variant="standard" style={{marginBottom:"2em"}} 
+                onChange={(e) => {
+                    setTable(e.target.value)
              }} />  
 
             <Button style={{marginTop:"0.4em", marginLeft:"1em"}} disabled={action=="update"} variant="contained" onClick={() => {
                 createTable()
             }}>Create Table</Button> 
 
-            <div/>     
+            <Button style={{marginTop:"0.4em", marginLeft:"1em"}} onClick={historyRewind} variant="contained" >Back</Button>   
+
+            <div/>
 
             <AddField AddField={addField} />
 

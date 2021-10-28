@@ -10,17 +10,14 @@ import Header from './components/header'
 import TheArea from './components/the-area'
 import Modules from './components/modules'
 
-
 function App() {
 
   return (
     <>
+
       <Header />
 
-      {/* {listviewState.value} / 
-      {appState.focusPage}  */}
-
-      <Split className="split">
+      <Split className="split" sizes={[20,80]}>
      
         <div>   
           <Modules/>

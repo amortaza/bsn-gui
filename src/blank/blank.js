@@ -45,3 +45,21 @@ const Modules = () => {
 }
 
 export default Modules
+
+
+
+
+function loadTableLable(table) {
+    // console.log('****************** ' + table);
+    // cb( fields [] {name, type, label} ) api_getTableFields.v1
+    api_getTableFields(table, (fields) => {
+        console.log('******************** ' + JSON.stringify(fields));
+    })
+
+    // api_getTableFields( table, ({name, label}) => {
+    //     setTableDefs( [
+    //         ...tableDefs,
+    //         { table:name, label }
+    //     ])
+    // })
+}

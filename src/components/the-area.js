@@ -1,9 +1,11 @@
 /* eslint-disable */
 import React, {useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import axios from 'axios'
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check'
 
-// import { Button } from 'react-bootstrap'
+
+import axios from 'axios'
 
 import DictionaryForm from './dictionary-form'
 import DictionaryView from './dictionary-view'
@@ -14,13 +16,14 @@ import api_getTableByQuery from '../api/get_table_by_query'
 import api_getTableFields from '../api/get_table_fields'
 
 import { selector as appSelector } from '../app/slice'
+import {historyRewind as historyRewind_action, appMsg} from '../app/slice'
 
 const TheArea = () => {
     const appState = useSelector( appSelector )
     const dispatch = useDispatch()
 
-    const [pageData_listView, setPageData_listView] = useState({table: '', header:[], rows: [], total: 0 })
-    const [pageData_formView, setPageData_formView] = useState({ table:'none', formData: {} })
+    const [pageData_listView, setPageData_listView] = useState({table: '', tableLabel: '', header:[], rows: [], total: 0 })
+    const [pageData_formView, setPageData_formView] = useState({ table:'none', tableLabel: '', formData: {} })
 
     const [pageIndex, setPageIndex] = useState(1)
     const [pageSize, setPageSize] = useState(2)
@@ -31,23 +34,29 @@ const TheArea = () => {
 
     // listView
     useEffect( ()=> {
+        
         if (!appState.focusPage) return
         if ( appState.focusPage.type != 'listView') return
 
         const page = appState.focusPage
 
-        api_getTableByQuery(page.table, (pageIndex-1) * pageSize, pageSize, (header, rows, total) => {
-            if (header.length > 0) {
-                setPageData_listView( {table: page.table, header, rows, total} )
-            }
-            else {
+        // console.log('****************** the area ' + page.table);
+
+        api_getTableByQuery(page.table, (pageIndex-1) * pageSize, pageSize, (rows, total) => {
+
+            // I dont understand what this is
+            // if (header.length > 0) {
+            //     setPageData_listView( {table: page.table, header, rows, total} )
+            // }
+            // else {
+                // each field will be { name, label }
                 api_getTableFields(page.table, (fields) => {
                     const header = fields.map((field) => {
                         return field.label
                     })
-                    setPageData_listView( {table: page.table, header, rows, total} )
+                    setPageData_listView( {table: page.table, tableLabel: page.tableLabel, header, rows, total} )
                 })
-            }
+            // }
         })
         
     }, [appState.focusPage, pageIndex] )
@@ -64,6 +73,7 @@ const TheArea = () => {
             .then( res => {                
                 setPageData_formView( {
                     table: page.table,
+                    tableLabel: page.tableLabel,
                     formData: res.data
                 } )
             } )
@@ -93,9 +103,10 @@ const TheArea = () => {
 
         axios.get( 'http://localhost:8000/schema/' + page.table )
             .then( res => {                
-                // alert(JSON.stringify(res.data));
+                
                 setPageData_formView( {
                     table: page.table,
+                    tableLabel: page.tableLabel,
                     formData: buildFormData(res.data)
                 } )
             } )
@@ -113,22 +124,42 @@ const TheArea = () => {
         component = <DictionaryView />
 
     } else if ( appState.focusPage.type == 'listView') {
-        component = <ListView table={pageData_listView.table} headers={pageData_listView.header} recs={pageData_listView.rows} total={pageData_listView.total} setListPagination={setListPagination} />
+        component = <ListView table={pageData_listView.table} tableLabel={pageData_listView.tableLabel} recs={pageData_listView.rows} total={pageData_listView.total} setListPagination={setListPagination} />
 
     } else if ( appState.focusPage.type == 'updateFormView') { 
-        component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />
+        component = <Form table={pageData_formView.table} tableLabel={pageData_formView.tableLabel} formData={pageData_formView.formData} />
 
     } else if ( appState.focusPage.type == 'newFormView') { 
-        component = <Form table={pageData_formView.table} formData={pageData_formView.formData} />
+        component = <Form table={pageData_formView.table} tableLabel={pageData_formView.tableLabel} formData={pageData_formView.formData} />
 
     } else {
         component = <div>You are drunk! go home</div>
     }
 
+    let alertComponent
+
+    if (appState.alert.msg) {
+        alertComponent = <Alert 
+            icon={<CheckIcon fontSize="inherit" />} 
+            style={{marginBottom:"1em"}}
+            severity={appState.alert.type}>
+
+            {appState.alert.msg}
+        </Alert>
+
+        let timeout = {'error': 60000, 'warning':'60000', 'info':30000, 'success':15000}[ appState.alert.type ]
+        setTimeout(() => {
+            appMsg('info','',dispatch)
+        }, timeout);
+    }
+
     return (
-        <>
+        <div style={{padding:"1em"}}>
+
+            {alertComponent}
+
             {component}
-        </>
+        </div>
     )
 }
 

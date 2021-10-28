@@ -35,7 +35,7 @@ const Pagination = (props) => {
     let label = pageIndex + ' of ' + maxPageIndex
 
     return (
-        <Stack direction="row" spacing={1} style={{marginTop:"1em", marginBottom:"2em", marginLeft:"1em"}}>
+        <Stack direction="row" spacing={1} style={{marginTop:"1em", marginBottom:"2em"}}>
 
             <Button variant="contained" disabled={pageIndex==1} onClick={prevPage}>Previous</Button>   
 

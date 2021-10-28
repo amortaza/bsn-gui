@@ -1,7 +1,7 @@
 /* eslint-disable */
 import axios from 'axios'
 
-// cb( fields [] {name, type} )
+// cb( fields [] {name, type, label} ) api_getTableFields.v1
 const api_getTableFields = (table, cb) => {
 
     axios.get( `http://localhost:8000/schema/${table}` )

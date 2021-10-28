@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux'
 
 import { gotoUpdateFormView as gotoUpdateFormView_action } from '../app/slice'
 import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
+import api_getTableFields from '../api/get_table_fields'
 
 import Pagination from './pagination'
 
@@ -42,6 +43,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
   /*
     props.table
+    props.tableLabel
     props.headers
     props.recs
 
@@ -53,23 +55,37 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     props.setListPagination( index, size )
   */
 const ListView = (props) => {
+    // console.log('******************** ListView ' + JSON.stringify(props));
     const [recs, setRecs] = useState( props.recs )
+
+    // headerDefs = [ {field, label} ... ]
+    const [headerDefs, setHeaderDefs] = useState( [] )
 
     const dispatch = useDispatch()
 
-    let headers = props.headers;
-
     useEffect(() => {
-      setRecs(props.recs)
-    }, [props.recs])
 
+      // cb( fields [] {name, type, label} ) api_getTableFields.v1
+      
+      if (!props.table) return;
 
-    function gotoUpdateFormView( table, recordId ) {
-      dispatch(gotoUpdateFormView_action( { table, recordId } ))
+      console.log('ListView calling api_getTableFields for table ' + props.table);
+
+      api_getTableFields( props.table, (fields) => {
+        setHeaderDefs( fields.map(( {name, label}) => {
+          return {field: name, label }
+        }))  
+
+        setRecs(props.recs)
+      })
+    }, [props.table])
+
+    function gotoUpdateFormView( table, tableLabel, recordId ) {
+      dispatch(gotoUpdateFormView_action( { table, tableLabel, recordId } ))
     }
     
-    function gotoNewFormView( table ) {
-      dispatch(gotoNewFormView_action( { table } ))
+    function gotoNewFormView( table, tableLabel ) {
+      dispatch(gotoNewFormView_action( { table, tableLabel } ))
     }
 
     function deleteRecord(table, xid) { 
@@ -89,8 +105,10 @@ const ListView = (props) => {
 
     return (
       <>
-        <Button style={{marginTop:"1em", marginBottom:"2em", marginLeft:"1em"}} variant="contained" onClick={() => {
-            gotoNewFormView( props.table )
+        <h3>{props.tableLabel} ( {props.table} )</h3>
+
+        <Button style={{marginTop:"1em", marginBottom:"2em"}} variant="contained" onClick={() => {
+            gotoNewFormView( props.table, props.tableLabel )
         }}>New</Button>   
 
         <TableContainer component={Paper}>
@@ -101,8 +119,8 @@ const ListView = (props) => {
                   <StyledTableCell></StyledTableCell>
                   <StyledTableCell></StyledTableCell>
 
-                  {headers.map( (header) => (
-                    <StyledTableCell>{header}</StyledTableCell>
+                  {headerDefs.map( (headerDef) => (
+                    <StyledTableCell>{headerDef.label}</StyledTableCell>
                   ) ) }
                 </TableRow>
               </TableHead>
@@ -115,7 +133,7 @@ const ListView = (props) => {
 
                     <StyledTableCell>
                       <Button variant="outlined" size="small" color="primary" onClick={() => {
-                          gotoUpdateFormView( props.table, row.x_id )
+                          gotoUpdateFormView( props.table, props.tableLabel, row.x_id )
                       }}>Edit</Button>   
 
                     </StyledTableCell>
@@ -127,8 +145,8 @@ const ListView = (props) => {
 
                     </StyledTableCell>
 
-                    {headers.map( (header) => (
-                      <StyledTableCell>{row[ header ] + ''}</StyledTableCell>
+                    {headerDefs.map( (headerDef) => (
+                      <StyledTableCell>{row[ headerDef.field ] + ''}</StyledTableCell>
                     ) ) }
 
                   </StyledTableRow>
