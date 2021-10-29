@@ -25,11 +25,12 @@ const TheArea = () => {
     const [pageData_listView, setPageData_listView] = useState({table: '', tableLabel: '', header:[], rows: [], total: 0 })
     const [pageData_formView, setPageData_formView] = useState({ table:'none', tableLabel: '', formData: {} })
 
-    const [pageIndex, setPageIndex] = useState(1)
-    const [pageSize, setPageSize] = useState(2)
+    const [pageIndex, setPageIndex] = useState(0)
+    const [pageSize, setPageSize] = useState(5)
 
     function setListPagination(index, size) {
         setPageIndex( index )
+        setPageSize( size )
     }
 
     // listView
@@ -40,26 +41,18 @@ const TheArea = () => {
 
         const page = appState.focusPage
 
-        // console.log('****************** the area ' + page.table);
+        api_getTableByQuery(page.table, pageIndex * pageSize, pageSize, (rows, total) => {
 
-        api_getTableByQuery(page.table, (pageIndex-1) * pageSize, pageSize, (rows, total) => {
-
-            // I dont understand what this is
-            // if (header.length > 0) {
-            //     setPageData_listView( {table: page.table, header, rows, total} )
-            // }
-            // else {
-                // each field will be { name, label }
-                api_getTableFields(page.table, (fields) => {
-                    const header = fields.map((field) => {
-                        return field.label
-                    })
-                    setPageData_listView( {table: page.table, tableLabel: page.tableLabel, header, rows, total} )
+            // each field will be { name, label }
+            api_getTableFields(page.table, (fields) => {
+                const header = fields.map((field) => {
+                    return field.label
                 })
-            // }
+                setPageData_listView( {table: page.table, tableLabel: page.tableLabel, header, rows, total} )
+            })
         })
         
-    }, [appState.focusPage, pageIndex] )
+    }, [appState.focusPage, pageIndex, pageSize] )
 
     // updateFormView
     useEffect( ()=> {

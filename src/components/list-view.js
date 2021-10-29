@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import {useState} from 'react'
 import Button from '@mui/material/Button'
-
+import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -55,11 +55,16 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     props.setListPagination( index, size )
   */
 const ListView = (props) => {
-    // console.log('******************** ListView ' + JSON.stringify(props));
-    const [recs, setRecs] = useState( props.recs )
+    
+    const [pagination_pageIndex, setPagination_pageIndex] = useState( 0 )
+    const [pagination_pageSize, setPagination_pageSize] = useState( 5 )
 
-    // headerDefs = [ {field, label} ... ]
+    const [recs, setRecs] = useState( props.recs )
+    const [gridRows, setGridRows] = useState( [] )
+
+    // headerDefs = [ {field, label} ... ].v1
     const [headerDefs, setHeaderDefs] = useState( [] )
+    const [gridCols, setGridCols] = useState( [] )
 
     const dispatch = useDispatch()
 
@@ -69,7 +74,7 @@ const ListView = (props) => {
       
       if (!props.table) return;
 
-      console.log('ListView calling api_getTableFields for table ' + props.table);
+      // console.log('ListView calling api_getTableFields for table ' + props.table);
 
       api_getTableFields( props.table, (fields) => {
         setHeaderDefs( fields.map(( {name, label}) => {
@@ -100,8 +105,62 @@ const ListView = (props) => {
     }
 
     function setListPagination(pageIndex, pageSize) {
+      setPagination_pageIndex( pageIndex )
+      setPagination_pageSize( pageSize )
+
       props.setListPagination(pageIndex, pageSize)      
     }
+
+    useEffect(() => {
+      let rows = props.recs.map((rec) => {
+        let gridRow = { 
+          ...rec,
+          id: rec.x_id 
+        }
+
+        gridRow[ '-' ] = rec.x_id
+
+        return gridRow
+      })
+      setGridRows(rows)
+    }, [props.recs, headerDefs] )
+
+    useEffect( () => {
+      // headerDefs = [ {field, label} ... ].v1
+      let cols = headerDefs.map( (def) => {
+        return {
+          field:def.field,
+          headerName:def.label,
+          description:def.field,
+          width:200,
+          minWidth:200,
+          renderCell: null,
+        }
+      })
+
+      cols.splice(0,0,{
+        field:'-',
+        headerName:'-',
+        description:'',
+        width:210,
+        minWidth:200,
+        renderCell: (params) => {
+          return (
+            <>
+              <Button variant="outlined" size="small" color="primary" onClick={() => {
+                gotoUpdateFormView( props.table, props.tableLabel, params.value )
+              }}>Edit</Button>   
+
+              <Button variant="outlined" size="small" color="error" style={{marginLeft:"2em"}} onClick={() => {
+                deleteRecord(props.table, params.value)
+              }}>Delete</Button>   
+            </>
+          )
+        }
+    })
+
+      setGridCols(cols)
+    }, [headerDefs] )
 
     return (
       <>
@@ -109,55 +168,21 @@ const ListView = (props) => {
 
         <Button style={{marginTop:"1em", marginBottom:"2em"}} variant="contained" onClick={() => {
             gotoNewFormView( props.table, props.tableLabel )
-        }}>New</Button>   
+        }}>New {props.tableLabel}</Button>   
 
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell></StyledTableCell>
-                  <StyledTableCell></StyledTableCell>
-
-                  {headerDefs.map( (headerDef) => (
-                    <StyledTableCell>{headerDef.label}</StyledTableCell>
-                  ) ) }
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-
-                {recs.map((row) => (
-                    
-                  <StyledTableRow key={row.Table}>
-
-                    <StyledTableCell>
-                      <Button variant="outlined" size="small" color="primary" onClick={() => {
-                          gotoUpdateFormView( props.table, props.tableLabel, row.x_id )
-                      }}>Edit</Button>   
-
-                    </StyledTableCell>
-
-                    <StyledTableCell>
-                      <Button variant="outlined" size="small" color="error" onClick={() => {
-                          deleteRecord(props.table, row.x_id)
-                      }}>Delete</Button>   
-
-                    </StyledTableCell>
-
-                    {headerDefs.map( (headerDef) => (
-                      <StyledTableCell>{row[ headerDef.field ] + ''}</StyledTableCell>
-                    ) ) }
-
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-
-            </Table>
-
-        </TableContainer>
-
-        <Pagination setListPagination={setListPagination} total={props.total} />
+        <div style={{ height: 400, width: '100%' }}>
+          <div style={{ display: 'flex', height: '100%' }}>
+            <div style={{ flexGrow: 1 }}>
+              <DataGrid 
+                rows={gridRows} columns={gridCols} 
+                page={pagination_pageIndex} pageSize={pagination_pageSize} rowCount={props.total}
+                paginationMode="server"
+                onPageChange = {(newPage) => {
+                setListPagination(newPage, pagination_pageSize)
+              }}/>
+            </div>
+          </div>
+        </div>
       </>
     )
 }
