@@ -2,15 +2,14 @@
 import React, {useEffect, useState} from 'react'
 
 import { useParams } from 'react-router'
+
 import api_getTableById from '../api/get_table_by_id'
 
-import Form from './form-view'
+import FormView from './form-view'
 
 /*
-props.table
-props.tableLabel
-props.formData
-props.isUpdateForm
+params.table
+params.id (can be 'new')
 */
 const UrlFormView = (props) => {
     let { table, id } = useParams()
@@ -19,19 +18,20 @@ const UrlFormView = (props) => {
 
     useEffect( () => {
 
+        if (id == 'new') return
+
         // cb( { ...record } ).v1
         api_getTableById( table, id, (record) => {
-            // alert(JSON.stringify(record));
             setRecordData( record )
         })
+
     }, [ table, id ] )
 
     return (
-        <Form 
+        <FormView
             table={table} 
-            tableLabel={'Todo'} 
+            id={id}
             formData={recordData} 
-            isUpdateForm={true}
         />
     )
 }

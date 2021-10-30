@@ -4,37 +4,45 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import api_getTableFields from '../api/get_table_fields'
-import {historyRewind as historyRewind_action, appMsg} from '../app/slice'
+import {appMsg} from '../app/slice'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
+import { Typography } from '@mui/material';
 
 /*
 props.table
+props.id (can be 'new')
 props.formData
-props.isUpdateForm
 */
 const FormView = (props) => {
     const dispatch = useDispatch()
 
-    const [formToPost, setFormToPost] = useState( props.formData ) 
+    const [formId, setFormId] = useState( props.id )
+
+    const [form2post, setForm2Post] = useState( props.formData ) 
+
     const [fieldToLabel, setFieldToLabel] = useState( {} ) 
     const [tableLabel, setTableLabel] = useState( 'unknown' ) 
 
+    // set form-to-post from formData
     useEffect( () => {
-        // alert(JSON.stringify(props.formData));
-        setFormToPost( props.formData )
+        
+        setForm2Post(props.formData)
 
     }, [ props.formData ])
 
+    // set field-to-label
+    // set tableLabel
+    // set empty form-to-Post
+    // [ props.table, formId ]
     useEffect( () => {
 
-        // console.log('****************** form view table is ' + props.table);
-
         if (!props.table) return
-        
+
         // cb( fields [] {name, type, label} ) api_getTableFields.v1
         api_getTableFields( props.table, (fields) => {
             let map = {}
+            let emptyRec = {}
 
             for (let i = 0;i < fields.length; i++) {
                 let f = fields[i]
@@ -43,27 +51,22 @@ const FormView = (props) => {
                 if (f.schema_type == 'relation') {
                     setTableLabel(f.label)
                 }
+
+                emptyRec[ f.name ] = ''
             }
+
+            if (formId == 'new') {
+                setForm2Post(emptyRec)
+            }
+
             setFieldToLabel(map)
         })
-    }, [ props.table ] )
+    }, [ props.table, formId ] )
 
-    const historyRewind = () => {
-        dispatch(historyRewind_action())
-    }
-
-    const saveForm = () => {
-        if (props.isUpdateForm) {
-            putFormToServer()
-        } else {
-            postFormToServer()
-        }       
-    }
-
-    const putFormToServer = () => {
-        axios.put( 'http://localhost:8000/table/' + props.table + '/' + props.formData.x_id, formToPost )
+    const updateFormToServer = () => {
+        
+        axios.put( 'http://localhost:8000/table/' + props.table + '/' + props.formData.x_id, form2post )
             .then( res => {                
-                // console.log('******************** ' + JSON.stringify(res));
                 appMsg("info", "Save successful!", dispatch)
             } )
             .catch((e) => {
@@ -72,9 +75,16 @@ const FormView = (props) => {
             })
     }
 
-    const postFormToServer = () => {
-        axios.post( 'http://localhost:8000/table/' + props.table, formToPost )
-            .then( res => {                
+    const newFormToServer = () => {
+
+        axios.post( 'http://localhost:8000/table/' + props.table, form2post )
+            .then( res => {    
+                
+                if (res.data && res.data.length > 31) {
+                    setFormId(res.data)
+                    setForm2Post( { ...form2post, 'x_id': res.data} )
+                }
+
                 appMsg("info", "Save successful!", dispatch)
             } )
             .catch((e) => {
@@ -83,16 +93,20 @@ const FormView = (props) => {
             })
     }
 
-    const onChange = (value, field) => {
-        console.log(`****************** ${field} ${value}`);
+    const onChange = (e, value, field) => {
+        e.preventDefault()
 
-        let map = {
-            ...formToPost
-        }
-
+        var map = { ...form2post }
         map[ field ] = value
+        setForm2Post(map)
+    }
 
-        setFormToPost( map )
+    let save_button = null
+
+    if (formId == 'new') {
+        save_button = <Button style={{marginTop:"2em"}} variant="contained" onClick={newFormToServer}>Create</Button>   
+    } else {
+        save_button = <Button style={{marginTop:"2em"}} variant="contained" onClick={updateFormToServer}>Update</Button>   
     }
 
     return (
@@ -100,30 +114,30 @@ const FormView = (props) => {
             
             <h3>{tableLabel} ( {props.table} )</h3>
 
-            {Object.keys(formToPost).map( field => {
-
-                const fieldValue = formToPost[ field ]
+            {Object.keys( form2post ).map( field => {
+                const fieldValue = form2post[ field ]
                 const label = fieldToLabel[ field ]
 
                 return (
-                    <div style={{marginTop:"2em"}} key={+new Date() + Math.random(10000)}>
+                    <div style={{marginTop:"2em"}} >
 
                         <TextField 
 
                             onChange={(e)=>{
-                                onChange(e.target.value, field)
-                            }} 
+                                onChange(e, e.target.value, field)
+                            }}  
 
-                            id={field + '_id'} disabled={field == 'x_id'} label={label} defaultValue={fieldValue} 
-                            variant="standard" />
+                            label={label} 
+                            value={fieldValue} 
+                            variant="standard"
+                        />
 
                     </div>
                 )
             })}
 
-
-            <Button style={{marginTop:"2em"}} variant="contained" onClick={saveForm}>Save</Button>   
-            <Button style={{marginTop:"2em", marginLeft:"1em"}} onClick={historyRewind} variant="contained" >Cancel</Button>   
+            {save_button}
+            
         </div>
     )
 }

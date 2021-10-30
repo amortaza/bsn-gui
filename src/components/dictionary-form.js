@@ -22,9 +22,10 @@ import CardContent from '@mui/material/CardContent';
 import axios from 'axios'
 import { Save } from '@mui/icons-material';
 import AddField from '../widget/add-field';
+
 import api_getTableFields from '../api/get_table_fields'
 import api_deleteField from '../api/delete_field'
-import {historyRewind as historyRewind_action, appMsg} from '../app/slice'
+import { appMsg } from 'src/app/slice';
 
  
 /*
@@ -109,10 +110,6 @@ const DictionaryForm = (props) => {
                 console.log('****************** ' + e);
                 appMsg("error", "Failed to create table, see " + e, dispatch );
             })
-    }
-
-    const historyRewind = () => {
-        dispatch(historyRewind_action())
     }
 
     const css2 = {

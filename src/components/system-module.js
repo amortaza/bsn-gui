@@ -17,12 +17,9 @@ import Divider from '@mui/material/Divider';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { Accordion, AccordionSummary, AccordionDetails, MenuItem } from '@mui/material'
+import { Accordion, AccordionSummary, AccordionDetails, MenuItem, Chip, Card } from '@mui/material'
 import {useEffect} from 'react'
 import axios from 'axios'
-
-import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
-import { gotoDictionaryView as gotoDictionaryView_action } from '../app/slice'
 
 const style = {
     width: '100%',
@@ -38,23 +35,13 @@ export default function SystemModule() {
 
   const dispatch = useDispatch()
 
-  function gotoUpdateFormView( table, recordId ) {
-    dispatch(gotoUpdateFormView_action( { table, recordId } ))
-  }
-
-  function gotoNewFormView( table, tableLabel ) {
-    dispatch(gotoNewFormView_action( { table, tableLabel } ))
-  }
-
-  function gotoDictionaryView( table ) {
-    dispatch(gotoDictionaryView_action( { table } ))
-  }
-
   function renderTables() { 
     return tables.map( ({table, tableLabel}) => {
       return (
         <AccordionDetails>
-          <MenuItem component={Link} to={`/table/${table}`} >{tableLabel} ( {table} ) </MenuItem>
+          <Link to={`/table/${table}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+            <div style={{ paddingLeft: 13 }}>{tableLabel + ' ( ' + table + ' )'}</div>
+          </Link>
         </AccordionDetails>
       )
     })
@@ -77,9 +64,6 @@ export default function SystemModule() {
         .catch(console.log)
         // todo dialog box here
 }, [] )
-
-
-
 
 
   const handleChange =
@@ -137,7 +121,7 @@ return (
             <Typography>System</Typography>
           </AccordionSummary>
 
-          <AccordionDetails onClick={()=>gotoDictionaryView()}>
+          <AccordionDetails onClick={()=>{ /*gotoDictionaryView()*/ }}>
             <Typography>
               Dictionary
             </Typography>

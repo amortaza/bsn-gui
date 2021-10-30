@@ -13,9 +13,7 @@ import Box from '@mui/material/Box';
 
 import axios from 'axios'
 
-import { gotoDictionaryForm as gotoDictionaryForm_action } from '../app/slice'
 import api_getTableFields from '../api/get_table_fields'
-import {historyRewind as historyRewind_action} from '../app/slice'
 
 /*
 */
@@ -46,21 +44,8 @@ const DictionaryView = () => {
             // todo dialog box here
     }, [] )
  
-    const historyRewind = () => {
-        dispatch(historyRewind_action())
-    }
-
     const onChange = (e) => {
         setFilter( e.target.value )
-    }
-
-    const gotoDictionaryForm  = (table) => {
-        const params =  {
-            action: table == "" ? "create" : "update",
-            table
-        }
-
-        dispatch(gotoDictionaryForm_action(params))
     }
 
     const renderTables = () => {
@@ -69,7 +54,7 @@ const DictionaryView = () => {
                 return (
                     <div key={table}>
                         <ListItem button onClick={() => {
-                                gotoDictionaryForm(table)
+                                // gotoDictionaryForm(table)
                             }}>
 
                             <ListItemText primary={label + ' ( ' + table + ' ) '}  />
@@ -88,7 +73,7 @@ const DictionaryView = () => {
             <div style={{marginTop:"1em", marginBottom:"3em"}}>
                 {/* New Button */}
                 <Button style={{}} variant="contained" onClick={() => {
-                    gotoDictionaryForm("")
+                    // gotoDictionaryForm("")
                 }}>New Table</Button>   
 
                 {/* Cancel Button */}

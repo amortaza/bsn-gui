@@ -28,7 +28,8 @@ const UrlListView = () => {
     useEffect( () => {
 
         // table, pageIndex, pageSize, cb( rows, totalCount ).v1
-        api_getTableByQuery( table, pageIndex, pageSize, (rows, total) => {            
+        api_getTableByQuery( table, pageIndex, pageSize, (rows, total) => {  
+            console.log('****************** ' + pageIndex + ' ' + pageSize)          
             setRecs( rows )
             setTotalCount(total)
         })

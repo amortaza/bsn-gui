@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import Split from 'react-split'
-
+import { useSelector, useDispatch } from 'react-redux'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import './App.css';
@@ -13,6 +13,9 @@ import {
   Link
 } from "react-router-dom";
 
+import {appMsg} from './app/slice'
+import { selector as appSelector } from './app/slice'
+
 import Header from './components/header'
 import Modules from './components/modules'
 
@@ -20,11 +23,32 @@ import UrlFormView from './components/url-form-view'
 import UrlListView from './components/url-list-view'
 
 import About from './components/about'
-import TheArea from './components/the-area'
+import { Alert } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check'
 
 function App() {
 
-  return (
+  const appState = useSelector( appSelector )
+  const dispatch = useDispatch()
+
+  let alertComponent
+
+    if (appState.alert.msg) {
+        alertComponent = <Alert 
+            icon={<CheckIcon fontSize="inherit" />} 
+            style={{marginBottom:"1em"}}
+            severity={appState.alert.type}>
+
+            {appState.alert.msg}
+        </Alert>
+
+        let timeout = {'error': 60000, 'warning':'60000', 'info':30000, 'success':15000}[ appState.alert.type ]
+        setTimeout(() => {
+            appMsg('info','',dispatch)
+        }, timeout);
+    }
+
+    return (
     <Router>
 
       <Header />
@@ -36,6 +60,8 @@ function App() {
       </div>
 
       <div style={{padding:"1em"}}>
+
+        {alertComponent}
 
         <Switch>
 
@@ -52,7 +78,7 @@ function App() {
           </Route>
 
           <Route path="/">
-            <TheArea/>
+            <div>Dress up and nowhere to go?</div>
           </Route>
 
         </Switch>
