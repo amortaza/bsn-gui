@@ -2,7 +2,7 @@
     "compilerOptions": {
       "baseUrl": "./",
       "checkJs": true,
-      "jsx": "react",
+      "jsx": "react-jsx",
       "paths": {
         "$libs": ["src/libs"],
         "$libs/*": ["src/libs/*"]

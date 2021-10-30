@@ -34,29 +34,6 @@ export const slice = createSlice({
       }
     },
 
-    gotoListView: (state = initialState, action) => {
-      state.history.push( state.focusPage )
-
-      state.focusPage = {
-        type: 'listView',
-        table: action.payload.table,
-        tableLabel: action.payload.tableLabel
-      }
-    },
-
-    // payload.table
-    // payload.tableLabel
-    gotoUpdateFormView: (state = initialState, action) => {
-      state.history.push( state.focusPage )
-
-      state.focusPage = {
-        type: 'updateFormView',
-        table: action.payload.table,
-        tableLabel: action.payload.tableLabel,
-        recordId: action.payload.recordId
-      }
-    },
-
     // payload.table
     // payload.tableLabel
     gotoNewFormView: (state = initialState, action) => {
@@ -99,9 +76,7 @@ export const {
   historyRewind,
   gotoDictionaryForm, 
   gotoDictionaryView, 
-  gotoListView, 
-  gotoNewFormView, 
-  gotoUpdateFormView } = actions
+  gotoNewFormView } = actions
 
 export const reducer = slice.reducer
 export const selector = state => state.AppReducer

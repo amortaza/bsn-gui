@@ -8,7 +8,8 @@ import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {AccordionSummaryProps} from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-
+import { Link } from 'react-router-dom'
+import Button from '@mui/material/Button'
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -16,11 +17,10 @@ import Divider from '@mui/material/Divider';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
+import { Accordion, AccordionSummary, AccordionDetails, MenuItem } from '@mui/material'
 import {useEffect} from 'react'
 import axios from 'axios'
-import { gotoListView as gotoListView_action } from '../app/slice'
-import { gotoUpdateFormView as gotoUpdateFormView_action } from '../app/slice'
+
 import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
 import { gotoDictionaryView as gotoDictionaryView_action } from '../app/slice'
 
@@ -38,11 +38,6 @@ export default function SystemModule() {
 
   const dispatch = useDispatch()
 
-  function gotoListView( table, tableLabel ) {
-    // console.log('****************** going to list view with table ' + table);
-    dispatch(gotoListView_action( { table, tableLabel } ))
-  }
-
   function gotoUpdateFormView( table, recordId ) {
     dispatch(gotoUpdateFormView_action( { table, recordId } ))
   }
@@ -58,8 +53,8 @@ export default function SystemModule() {
   function renderTables() { 
     return tables.map( ({table, tableLabel}) => {
       return (
-        <AccordionDetails onClick={()=>gotoListView(table, tableLabel)}>
-          <Typography>{tableLabel} ( {table} ) </Typography>
+        <AccordionDetails>
+          <MenuItem component={Link} to={`/table/${table}`} >{tableLabel} ( {table} ) </MenuItem>
         </AccordionDetails>
       )
     })
@@ -119,7 +114,7 @@ const AccordionSummary = styled((props) => (
       : 'rgba(0, 0, 0, .03)',
   flexDirection: 'row-reverse',
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
+    transform: 'rotate(0deg)',
   },
   '& .MuiAccordionSummary-content': {
     marginLeft: theme.spacing(1),

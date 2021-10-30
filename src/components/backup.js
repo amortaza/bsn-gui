@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import React, { useEffect } from 'react'
 import {useState} from 'react'
 import Button from '@mui/material/Button'
@@ -35,6 +33,7 @@ const ListView = (props) => {
     const [pagination_pageIndex, setPagination_pageIndex] = useState( 0 )
     const [pagination_pageSize, setPagination_pageSize] = useState( 5 )
 
+    // const [recs, setRecs] = useState( props.recs )
     const [gridRows, setGridRows] = useState( [] )
 
     // headerDefs = [ {field, label} ... ].v1
@@ -58,19 +57,29 @@ const ListView = (props) => {
           }
         }
 
-        fields = fields.filter( ({schema_type}) => {
-          return schema_type != 'relation'
-        })
-
         setHeaderDefs( fields.map(( {name, label}) => {
           return {field: name, label }
         }))  
 
+        // setRecs(props.recs)
       })
     }, [props.table])
 
     function gotoNewFormView( table, tableLabel ) {
       dispatch(gotoNewFormView_action( { table, tableLabel } ))
+    }
+
+    function deleteRecord(table, xid) { 
+      // api_deleteRecord(table, xid, () => {
+
+        // setListPagination(pagination_pageIndex, pagination_pageSize)
+        
+        let newGridRows = gridRows.filter( (rec) => {
+          return rec.x_id != xid;
+        })
+
+        setGridRows( newGridRows )
+      // })
     }
 
     function setListPagination(pageIndex, pageSize) {
@@ -105,8 +114,8 @@ const ListView = (props) => {
           field:def.field,
           headerName:def.label,
           description:def.field,
-          width:120,
-          minWidth:120,
+          width:200,
+          minWidth:200,
           renderCell: null,
         }
       })
@@ -115,54 +124,58 @@ const ListView = (props) => {
         field:'-',
         headerName:'-',
         description:'',
-        width:100,
-        minWidth:100,
+        width:210,
+        minWidth:200,
         renderCell: (params) => {
           return (
             <>
               <Button component={Link} to={`/table/${props.table}/${params.value}`} variant="outlined" size="small" color="primary">
                 Edit
               </Button>   
+
+              <Button variant="outlined" size="small" color="error" style={{marginLeft:"2em"}} onClick={() => {
+                deleteRecord(props.table, params.value)
+              }}>Delete</Button>   
             </>
           )
         }
     })
 
-    console.log('****************** ' + JSON.stringify(cols))
       setGridCols(cols)
     }, [headerDefs] )
 
-    let dg = (
-      <DataGrid 
-                rows={gridRows} columns={gridCols} 
-                page={pagination_pageIndex} pageSize={pagination_pageSize} rowCount={props.total}
-                paginationMode="server"
-                disableSelectionOnClick
-                onPageChange = {(newPage) => {
-                  setListPagination(newPage, pagination_pageSize)
-                }} 
-              />
-    )
+    let idiot = gridRows.map( (r) => {
+      return (
+        <div onClick={}>{r.x_id}</div>
+      )
+    })
 
     return (
       <>
-
         <h3>{tableLabel} ( {props.table} )</h3>
 
         <Button style={{marginTop:"1em", marginBottom:"2em"}} variant="contained" onClick={() => {
             gotoNewFormView( props.table, tableLabel )
         }}>New {tableLabel}</Button>   
 
-        <div style={{ height: 400, width: '100%' }}>
+        {idiot}
+
+        <br/>
+
+        {/* <div style={{ height: 400, width: '100%' }}>
           <div style={{ display: 'flex', height: '100%' }}>
             <div style={{ flexGrow: 1 }}>
-
-            {dg}
-            
+              <DataGrid 
+                rows={gridRows} columns={gridCols} 
+                page={pagination_pageIndex} pageSize={pagination_pageSize} rowCount={props.total}
+                paginationMode="server"
+                disableSelectionOnClick
+                onPageChange = {(newPage) => {
+                setListPagination(newPage, pagination_pageSize)
+              }}/>
             </div>
           </div>
-        </div>
-
+        </div> */}
       </>
     )
 }

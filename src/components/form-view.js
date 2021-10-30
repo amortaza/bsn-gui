@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, {useEffect, useState} from 'react'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField'
@@ -9,7 +10,6 @@ import axios from 'axios'
 
 /*
 props.table
-props.tableLabel
 props.formData
 props.isUpdateForm
 */
@@ -18,8 +18,10 @@ const FormView = (props) => {
 
     const [formToPost, setFormToPost] = useState( props.formData ) 
     const [fieldToLabel, setFieldToLabel] = useState( {} ) 
+    const [tableLabel, setTableLabel] = useState( 'unknown' ) 
 
     useEffect( () => {
+        // alert(JSON.stringify(props.formData));
         setFormToPost( props.formData )
 
     }, [ props.formData ])
@@ -33,9 +35,14 @@ const FormView = (props) => {
         // cb( fields [] {name, type, label} ) api_getTableFields.v1
         api_getTableFields( props.table, (fields) => {
             let map = {}
+
             for (let i = 0;i < fields.length; i++) {
                 let f = fields[i]
                 map[f.name] = f.label
+
+                if (f.schema_type == 'relation') {
+                    setTableLabel(f.label)
+                }
             }
             setFieldToLabel(map)
         })
@@ -91,7 +98,7 @@ const FormView = (props) => {
     return (
         <div>
             
-            <h3>{props.tableLabel} ( {props.table} )</h3>
+            <h3>{tableLabel} ( {props.table} )</h3>
 
             {Object.keys(formToPost).map( field => {
 

@@ -9,7 +9,7 @@ import axios from 'axios'
 
 import DictionaryForm from './dictionary-form'
 import DictionaryView from './dictionary-view'
-import Form from './form-view'
+import FormView from './form-view'
 import ListView from './list-view'
 
 import api_getTableByQuery from '../api/get_table_by_query'
@@ -23,36 +23,28 @@ const TheArea = () => {
     const dispatch = useDispatch()
 
     const [pageData_listView, setPageData_listView] = useState({table: '', tableLabel: '', header:[], rows: [], total: 0 })
-    const [pageData_formView, setPageData_formView] = useState({ table:'none', tableLabel: '', formData: {} })
-
-    const [pageIndex, setPageIndex] = useState(0)
-    const [pageSize, setPageSize] = useState(5)
-
-    function setListPagination(index, size) {
-        setPageIndex( index )
-        setPageSize( size )
-    }
+    const [pageData_formView, setPageData_formView] = useState({ table:'none', formData: {} })
 
     // listView
-    useEffect( ()=> {
+    // useEffect( ()=> {
         
-        if (!appState.focusPage) return
-        if ( appState.focusPage.type != 'listView') return
+    //     if (!appState.focusPage) return
+    //     if ( appState.focusPage.type != 'listView') return
 
-        const page = appState.focusPage
+    //     const page = appState.focusPage
 
-        api_getTableByQuery(page.table, pageIndex * pageSize, pageSize, (rows, total) => {
+    //     api_getTableByQuery(page.table, pageIndex * pageSize, pageSize, (rows, total) => {
 
-            // each field will be { name, label }
-            api_getTableFields(page.table, (fields) => {
-                const header = fields.map((field) => {
-                    return field.label
-                })
-                setPageData_listView( {table: page.table, tableLabel: page.tableLabel, header, rows, total} )
-            })
-        })
+    //         // each field will be { name, label }
+    //         api_getTableFields(page.table, (fields) => {
+    //             const header = fields.map((field) => {
+    //                 return field.label
+    //             })
+    //             setPageData_listView( {table: page.table, tableLabel: page.tableLabel, header, rows, total} )
+    //         })
+    //     })
         
-    }, [appState.focusPage, pageIndex, pageSize] )
+    // }, [appState.focusPage, pageIndex, pageSize] )
 
     // updateFormView
     useEffect( ()=> {
@@ -66,7 +58,6 @@ const TheArea = () => {
             .then( res => {                
                 setPageData_formView( {
                     table: page.table,
-                    tableLabel: page.tableLabel,
                     formData: res.data
                 } )
             } )
@@ -99,7 +90,6 @@ const TheArea = () => {
                 
                 setPageData_formView( {
                     table: page.table,
-                    tableLabel: page.tableLabel,
                     formData: buildFormData(res.data)
                 } )
             } )
@@ -120,10 +110,10 @@ const TheArea = () => {
         component = <ListView table={pageData_listView.table} tableLabel={pageData_listView.tableLabel} recs={pageData_listView.rows} total={pageData_listView.total} setListPagination={setListPagination} />
 
     } else if ( appState.focusPage.type == 'updateFormView') { 
-        component = <Form table={pageData_formView.table} tableLabel={pageData_formView.tableLabel} formData={pageData_formView.formData} />
+        component = <FormView table={pageData_formView.table} formData={pageData_formView.formData} />
 
     } else if ( appState.focusPage.type == 'newFormView') { 
-        component = <Form table={pageData_formView.table} tableLabel={pageData_formView.tableLabel} formData={pageData_formView.formData} />
+        component = <FormView table={pageData_formView.table} formData={pageData_formView.formData} />
 
     } else {
         component = <div>You are drunk! go home</div>

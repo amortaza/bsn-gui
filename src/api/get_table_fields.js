@@ -1,7 +1,7 @@
 /* eslint-disable */
 import axios from 'axios'
 
-// cb( fields [] {name, type, label} ) api_getTableFields.v1
+// cb( fields [] {name, type, label, schema_type} ) api_getTableFields.v2
 const api_getTableFields = (table, cb) => {
 
     axios.get( `http://localhost:8000/schema/${table}` )
@@ -15,7 +15,7 @@ const api_getTableFields = (table, cb) => {
 
         for (let i = 0; i < data.length; i++) {
             var field = data[ i ]
-            fields.push( { name: field.x_field, type: field.x_field_type, label: field.x_label } )
+            fields.push( { name: field.x_field, type: field.x_field_type, label: field.x_label, schema_type: field.x_type } )
         }
 
         cb( fields )
