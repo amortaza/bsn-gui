@@ -2,16 +2,21 @@
 import axios from 'axios'
 import {appMsg} from '../app/slice'
 
-// cb()
+// cb().v1.api_deleteField
 const api_deleteField = (table, field, dispatch, cb ) => {
 
     axios.delete( `http://localhost:8000/schema/table/${table}/field/${field}` )
     .then( (res) => {
-        cb()
+         const msg = `deleted field "${field}"`
+         appMsg("success", msg, dispatch)
+         
+         cb()
     } )
     .catch( (err) => {
+        const msg = `failed to delete field "${field}", see console for more details`
+        console.log('****************** ' + msg)
         console.log('****************** ' + err)
-        dispatch("error", 'ERROR api_getTableFields ' + err, dispatch)
+        appMsg("error", msg, dispatch)
     })
 }
 

@@ -1,6 +1,6 @@
 /* eslint-disable */
-import React, {useEffect, useState} from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import {useEffect, useState} from 'react'
+import { useDispatch } from 'react-redux'
 
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
@@ -9,15 +9,13 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
-import Box from '@mui/material/Box';
 
 import axios from 'axios'
-
-import api_getTableFields from '../api/get_table_fields'
+import { Link, useHistory } from 'react-router-dom';
 
 /*
 */
-const DictionaryView = () => {
+export default function DictionaryView() {
 
     // tableDefs = [ { table, label } ... ]
     const [tableDefs, setTableDefs] = useState( [] ) 
@@ -53,12 +51,15 @@ const DictionaryView = () => {
             if (table.indexOf(filter) > -1 || label.indexOf(filter) > -1) {
                 return (
                     <div key={table}>
-                        <ListItem button onClick={() => {
-                                // gotoDictionaryForm(table)
-                            }}>
+                        <ListItem>
+                            
+                            <Button component={Link} to={`/schema/${table}`} variant="outlined" size="small" color="primary" style={{marginRight:"1em"}}>
+                            Edit
+                            </Button>   
 
                             <ListItemText primary={label + ' ( ' + table + ' ) '}  />
                         </ListItem>
+
                         <Divider />
                     </div>
                 )
@@ -66,18 +67,21 @@ const DictionaryView = () => {
         })
     }
 
+    const history = useHistory()
+
     return (
-        <div style={{padding:"1em"}} >
+        <>
             <h2>Dictionary</h2>
 
             <div style={{marginTop:"1em", marginBottom:"3em"}}>
                 {/* New Button */}
-                <Button style={{}} variant="contained" onClick={() => {
-                    // gotoDictionaryForm("")
+                <Button style={{marginTop:"1em", marginBottom:"2em"}} variant="contained" onClick={() => {
+                    history.push(`/schema/new`)
                 }}>New Table</Button>   
 
+
                 {/* Cancel Button */}
-                <Button style={{marginLeft:"1em"}} onClick={historyRewind} variant="contained" >Cancel</Button>   
+                {/* <Button style={{marginLeft:"1em"}} onClick={historyRewind} variant="contained" >Cancel</Button>    */}
             </div>
 
             <TextField id="filter" label="Filter" variant="outlined" onChange={onChange} defaultValue={filter} />
@@ -88,8 +92,7 @@ const DictionaryView = () => {
                 {renderTables()}
             </List>            
 
-        </div>
+        </>
     )
 }
 
-export default DictionaryView

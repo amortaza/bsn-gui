@@ -41,7 +41,7 @@ const FormView = (props) => {
         if (!props.table) return
 
         // cb( fields [] {name, type, label} ) api_getTableFields.v1
-        api_getTableFields( props.table, (fields) => {
+        api_getTableFields( props.table, dispatch, (fields) => {
             let map = {}
             let emptyRec = {}
 

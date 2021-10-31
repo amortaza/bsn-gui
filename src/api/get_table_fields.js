@@ -1,8 +1,9 @@
 /* eslint-disable */
 import axios from 'axios'
+import {appMsg} from '../app/slice'
 
 // cb( fields [] {name, type, label, schema_type} ) api_getTableFields.v2
-const api_getTableFields = (table, cb) => {
+const api_getTableFields = (table, dispatch, cb) => {
 
     axios.get( `http://localhost:8000/schema/${table}` )
     .then( (res) => {
@@ -21,9 +22,10 @@ const api_getTableFields = (table, cb) => {
         cb( fields )
     } )
     .catch( (err) => {
-        alert('ERROR api_getTableFields ' + err)
-        console.log(err);  
-        // todo dialog
+        const msg = `failed to get table fields for "${table}", see console for more details`
+        console.log('****************** ' + msg)
+        console.log('****************** ' + err)
+        appMsg("error", msg, dispatch)
     })
 }
 

@@ -96,10 +96,10 @@ export default function SystemModule() {
             <Typography>System</Typography>
           </AccordionSummary>
 
-          <AccordionDetails>
-            <Typography>
-              Dictionary
-            </Typography>
+          <AccordionDetails key="dictionary">
+            <Link to={`/schema`} style={{ color: 'inherit', textDecoration: 'none' }}>
+              <div style={{ paddingLeft: 13 }}>Dictionary</div>
+            </Link>
           </AccordionDetails>
 
         </Accordion>

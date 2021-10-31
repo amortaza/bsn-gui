@@ -1,22 +1,19 @@
 /* eslint-disable */
 import axios from 'axios'
+import {appMsg} from '../app/slice'
 
-// cb( { ...record } ).v1
-const api_getTableById = (table, id, cb) => {
+// cb( { ...record } ).v1.api_getTableById
+const api_getTableById = (table, id, dispatch, cb) => {
 
     axios.get( `http://localhost:8000/table/${table}/${id}` )
     .then( (res) => {
-        if (res.status != 200) {
-            alert('api_getTableById ' + res.status)
-            console.log('****************** ' + res)
-        } else {
-            cb( res.data )
-        }
+        cb( res.data )
     } )
     .catch( (err) => {
-        alert(err)
-        console.log(err);  
-        // todo dialog
+        const msg = `failed to get record from "${table}", see console for more details`
+        console.log('****************** ' + msg)
+        console.log('****************** ' + err)
+        appMsg("error", msg, dispatch)
     })
 }
 

@@ -63,9 +63,8 @@ const ListView = (props) => {
     const dispatch = useDispatch()
 
     function deleteRecord(table, id) { 
-      api_deleteRecord(table, id, () => {
-        appMsg('info', `Deleted successfully ...${table}:${id}`,dispatch)    
-        
+
+      api_deleteRecord(table, id, dispatch, () => {
         let newRecs = recs.filter( (r) => {
           return r.x_id != id          
         })
@@ -85,7 +84,7 @@ const ListView = (props) => {
       if (!props.table) return
 
       // cb( fields [] {name, type, label, schema_type} ) api_getTableFields.v1
-      api_getTableFields( props.table, (fields) => {
+      api_getTableFields( props.table, dispatch, (fields) => {
         
         for ( let i = 0; i < fields.length; i++) {
           if (fields[i].schema_type == 'relation') {            

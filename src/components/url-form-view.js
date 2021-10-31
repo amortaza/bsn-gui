@@ -1,5 +1,6 @@
 /* eslint-disable */
-import React, {useEffect, useState} from 'react'
+import {useEffect, useState} from 'react'
+import { useDispatch } from 'react-redux'
 
 import { useParams } from 'react-router'
 
@@ -11,17 +12,19 @@ import FormView from './form-view'
 params.table
 params.id (can be 'new')
 */
-const UrlFormView = (props) => {
+export default function UrlFormView (props) {
     let { table, id } = useParams()
     
     const [recordData, setRecordData] = useState( {} ) 
+
+    const dispatch = useDispatch()
 
     useEffect( () => {
 
         if (id == 'new') return
 
         // cb( { ...record } ).v1
-        api_getTableById( table, id, (record) => {
+        api_getTableById( table, id, dispatch, (record) => {
             setRecordData( record )
         })
 
@@ -35,5 +38,3 @@ const UrlFormView = (props) => {
         />
     )
 }
-
-export default UrlFormView

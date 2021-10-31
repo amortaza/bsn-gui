@@ -5,7 +5,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   alert: {
     type: 'info', // info, warning, error, success
-    msg: '',
+    msg: ''
   }
 }
 
@@ -27,10 +27,10 @@ export const slice = createSlice({
         'success': 'success',
         'ok':'success'
       }[ action.payload.type ]
-      
+
       state.alert = {
         type,
-        msg: action.payload.msg
+        msg: action.payload.msg,
       }
     },
   }

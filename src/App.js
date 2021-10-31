@@ -10,7 +10,6 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
 } from "react-router-dom";
 
 import {appMsg} from './app/slice'
@@ -25,24 +24,25 @@ import UrlListView from './components/url-list-view'
 import About from './components/about'
 import { Alert } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check'
+import UrlDictionaryView from './components/url-dictionary-view';
+import UrlDictionaryForm from './components/url-dictionary-form';
 
 function App() {
 
   const appState = useSelector( appSelector )
   const dispatch = useDispatch()
 
-  let alertComponent
-
-    if (appState.alert.msg) {
-        alertComponent = <Alert 
+  let alertComponent = <Alert 
             icon={<CheckIcon fontSize="inherit" />} 
-            style={{marginBottom:"1em"}}
+            style={{marginBottom:"2em", visibility: !!appState.alert.msg ? 'visible': 'hidden'}}
             severity={appState.alert.type}>
 
-            {appState.alert.msg}
+            {appState.alert.msg ? appState.alert.msg : 'Created Place Holder'}
+            
         </Alert>
 
-        let timeout = {'error': 60000, 'warning':'60000', 'info':30000, 'success':15000}[ appState.alert.type ]
+    if (appState.alert.msg) {
+        let timeout = {'error': 10000, 'warning':'10000', 'info':5000, 'success':5000}[ appState.alert.type ]
         setTimeout(() => {
             appMsg('info','',dispatch)
         }, timeout);
@@ -69,6 +69,18 @@ function App() {
             <About />
           </Route>
 
+          <Route path="/schema/new">
+            <UrlDictionaryForm action="new" />
+          </Route>
+
+          <Route path="/schema/:table">
+            <UrlDictionaryForm action="update" />
+          </Route>
+
+          <Route path="/schema">
+            <UrlDictionaryView />
+          </Route>
+
           <Route path="/table/:table/:id">
             <UrlFormView />
           </Route>
@@ -78,7 +90,7 @@ function App() {
           </Route>
 
           <Route path="/">
-            <div>Dress up and nowhere to go?</div>
+            <div>Dressed up and nowhere to go?</div>
           </Route>
 
         </Switch>

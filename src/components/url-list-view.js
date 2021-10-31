@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, {useEffect, useState} from 'react'
+import { useDispatch } from 'react-redux'
 
 import { useParams } from 'react-router'
 import api_getTableByQuery from '../api/get_table_by_query'
@@ -20,6 +21,8 @@ const UrlListView = () => {
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(5)
 
+    const dispatch = useDispatch()
+
     function setListPagination(index, size) {
         setPageIndex( index )
         setPageSize( size )
@@ -28,7 +31,7 @@ const UrlListView = () => {
     useEffect( () => {
 
         // table, pageIndex, pageSize, cb( rows, totalCount ).v1
-        api_getTableByQuery( table, pageIndex, pageSize, (rows, total) => {  
+        api_getTableByQuery( table, pageIndex, pageSize, dispatch, (rows, total) => {  
             //console.log('****************** ' + pageIndex + ' ' + pageSize + ' / ' + JSON.stringify(rows))          
             setRecs( rows )
             setTotalCount(total)
