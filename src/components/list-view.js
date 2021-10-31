@@ -1,9 +1,8 @@
 /* eslint-disable */
 
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import {useState} from 'react'
 import Button from '@mui/material/Button'
-import { DataGrid, GridRowsProp, GridColDef } from '@mui/x-data-grid'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -12,15 +11,15 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 
-import { gotoNewFormView as gotoNewFormView_action } from '../app/slice'
 import api_getTableFields from '../api/get_table_fields'
 
 import Pagination from './pagination'
 
 import api_deleteRecord from 'src/api/delete_record';
+import { appMsg } from 'src/app/slice';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -56,17 +55,29 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const ListView = (props) => {
 
     const [tableLabel, setTableLabel] = useState( 'Unknown' )
+    const [recs, setRecs] = useState( props.recs || [] )
     
-    // const [pagination_pageIndex, setPagination_pageIndex] = useState( 0 )
-    // const [pagination_pageSize, setPagination_pageSize] = useState( 5 )
-
-    // const [gridRows, setGridRows] = useState( [] )
-
     // headerDefs = [ {field, label} ... ].v1
     const [headerDefs, setHeaderDefs] = useState( [] )
-    // const [gridCols, setGridCols] = useState( [] )
 
     const dispatch = useDispatch()
+
+    function deleteRecord(table, id) { 
+      api_deleteRecord(table, id, () => {
+        appMsg('info', `Deleted successfully ...${table}:${id}`,dispatch)    
+        
+        let newRecs = recs.filter( (r) => {
+          return r.x_id != id          
+        })
+
+        setRecs( newRecs )
+      })
+    }
+
+    // set recs
+    useEffect(() => {
+      setRecs( [...props.recs])
+    },[props.recs])
 
     // set headerdefs
     useEffect(() => {
@@ -94,55 +105,56 @@ const ListView = (props) => {
       })
     }, [props.table])
 
-    
+    let history = useHistory()
+
     return (
       <>
         <h3>{tableLabel} ( {props.table} )</h3>
 
         <Button style={{marginTop:"1em", marginBottom:"2em"}} variant="contained" onClick={() => {
-            // gotoNewFormView( props.table, props.tableLabel )
-        }}>New {tableLabel}</Button>   
+          history.push(`/table/${props.table}/new`)
+        }}>
+          New {tableLabel}
+        </Button>   
 
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
 
-              <TableHead>
+              <TableHead sx={{ '& .MuiTableCell-head': {backgroundColor: '#01579B'}}}>
                 <TableRow>
                   <StyledTableCell></StyledTableCell>
                   <StyledTableCell></StyledTableCell>
 
                   {headerDefs.map( (headerDef) => (
-                    <StyledTableCell>{headerDef.label}</StyledTableCell>
+                    <StyledTableCell key={headerDef.label}>{headerDef.label}</StyledTableCell>
                   ) ) }
                 </TableRow>
               </TableHead>
 
               <TableBody>
-
-                {props.recs.map((row) => (
+                  {recs.map((row) => (
                     
-                  <StyledTableRow key={row.Table}>
-
-                    <StyledTableCell>
-                      <Button variant="outlined" size="small" color="primary" onClick={() => {
-                          // gotoUpdateFormView( props.table, props.tableLabel, row.x_id )
-                      }}>Edit</Button>   
-
-                    </StyledTableCell>
-
-                    <StyledTableCell>
-                      <Button variant="outlined" size="small" color="error" onClick={() => {
-                          // deleteRecord(props.table, row.x_id)
-                      }}>Delete</Button>   
-
-                    </StyledTableCell>
-
-                    {headerDefs.map( (headerDef) => (
-                      <StyledTableCell>{row[ headerDef.field ] + ''}</StyledTableCell>
-                    ) ) }
-
-                  </StyledTableRow>
-                ))}
+                    <StyledTableRow key={row.x_id}>
+              
+                      <StyledTableCell>
+                        <Button component={Link} to={`/table/${props.table}/${row.x_id}`} variant="outlined" size="small" color="primary">
+                          Edit
+                        </Button>   
+                      </StyledTableCell>
+              
+                      <StyledTableCell>
+                        <Button variant="outlined" size="small" color="error" onClick={() => {
+                            deleteRecord(props.table, row.x_id)
+                        }}>Delete</Button>   
+              
+                      </StyledTableCell>
+              
+                      {headerDefs.map( (headerDef) => (
+                        <StyledTableCell key={headerDef.field} >{row[ headerDef.field ] + ''}</StyledTableCell>
+                      ) ) }
+              
+                    </StyledTableRow>
+                  ))} 
               </TableBody>
 
             </Table>

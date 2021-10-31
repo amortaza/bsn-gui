@@ -1,3 +1,4 @@
+/* eslint-disable */
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -74,7 +75,7 @@ export default function SystemModule() {
   function renderTables() { 
     return tables.map( ({table, tableLabel}) => {
       return (
-        <AccordionDetails>
+        <AccordionDetails key={table}>
           <Link to={`/table/${table}`} style={{ color: 'inherit', textDecoration: 'none' }}>
             <div style={{ paddingLeft: 13 }}>{tableLabel + ' ( ' + table + ' )'}</div>
           </Link>

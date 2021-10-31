@@ -1,13 +1,13 @@
 /* eslint-disable */
-import React, {useEffect, useState} from 'react'
-import Box from '@mui/material/Box';
+import {useEffect, useState} from 'react'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import api_getTableFields from '../api/get_table_fields'
 import {appMsg} from '../app/slice'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import axios from 'axios'
-import { Typography } from '@mui/material';
+import { Fade, Tooltip } from '@mui/material';
+import { useHistory } from 'react-router';
 
 /*
 props.table
@@ -16,6 +16,7 @@ props.formData
 */
 const FormView = (props) => {
     const dispatch = useDispatch()
+    const history = useHistory()
 
     const [formId, setFormId] = useState( props.id )
 
@@ -93,6 +94,10 @@ const FormView = (props) => {
             })
     }
 
+    function goBack() { 
+        history.goBack()
+    }
+
     const onChange = (e, value, field) => {
         e.preventDefault()
 
@@ -121,6 +126,8 @@ const FormView = (props) => {
                 return (
                     <div style={{marginTop:"2em"}} >
 
+                        <Tooltip title={field} arrow TransitionComponent={Fade} TransitionProps={{ timeout: 1000 }} placement="right-start">
+
                         <TextField 
 
                             onChange={(e)=>{
@@ -130,13 +137,17 @@ const FormView = (props) => {
                             label={label} 
                             value={fieldValue} 
                             variant="standard"
+                            key={field}
                         />
+
+                        </Tooltip>
 
                     </div>
                 )
             })}
 
             {save_button}
+            <Button style={{marginLeft:"1em", marginTop:"2em"}} variant="contained" color="error" onClick={goBack}>Cancel</Button>   
             
         </div>
     )
