@@ -10,6 +10,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+
 } from "react-router-dom";
 
 import {appMsg} from './app/slice'
@@ -21,20 +22,22 @@ import Modules from './components/modules'
 import UrlFormView from './components/url-form-view'
 import UrlListView from './components/url-list-view'
 
+
 import About from './components/about'
-import { Alert } from '@mui/material';
+import { Alert } from '@mui/material'
 import CheckIcon from '@mui/icons-material/Check'
-import UrlDictionaryView from './components/url-dictionary-view';
-import UrlDictionaryForm from './components/url-dictionary-form';
+import UrlDictionaryView from './components/url-dictionary-view'
+import UrlDictionaryForm from './components/url-dictionary-form'
 
 function App() {
+  
 
   const appState = useSelector( appSelector )
   const dispatch = useDispatch()
 
   let alertComponent = <Alert 
             icon={<CheckIcon fontSize="inherit" />} 
-            style={{marginBottom:"2em", visibility: !!appState.alert.msg ? 'visible': 'hidden'}}
+            style={{marginBottom:"1em", visibility: !!appState.alert.msg ? 'visible': 'hidden'}}
             severity={appState.alert.type}>
 
             {appState.alert.msg ? appState.alert.msg : 'Created Place Holder'}

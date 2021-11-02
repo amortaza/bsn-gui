@@ -3,6 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
+  schemeRefreshFlag_count: 0,
   alert: {
     type: 'info', // info, warning, error, success
     msg: ''
@@ -17,6 +18,10 @@ export const slice = createSlice({
   // payload.type
   // payload.msg
   reducers: {
+    flagSchemeUpdate: (state = initialState, action) => {
+      state.schemeRefreshFlag_count++;
+    },
+
     setTypeMsg: (state = initialState, action) => {
       let type = {
         'error': 'error',
@@ -45,4 +50,8 @@ export const selector = state => state.AppReducer
 
 export const appMsg = (type, msg, dispatch) => {
   dispatch(actions.setTypeMsg({type, msg}))
+}
+
+export const flagSchemeUpdate = (dispatch) => {
+  dispatch( actions.flagSchemeUpdate() )
 }

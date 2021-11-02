@@ -20,6 +20,7 @@ import Pagination from './pagination'
 
 import api_deleteRecord from 'src/api/delete_record';
 import { appMsg } from 'src/app/slice';
+import { TextField } from '@mui/material';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -43,7 +44,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 /*
     props.table
-    props.recs
+    props.recs    
 
     props.pageIndex
     props.pageSize
@@ -56,6 +57,8 @@ const ListView = (props) => {
 
     const [tableLabel, setTableLabel] = useState( 'Unknown' )
     const [recs, setRecs] = useState( props.recs || [] )
+
+    const [filter, setFilter] = useState( '' )
     
     // headerDefs = [ {field, label} ... ].v1
     const [headerDefs, setHeaderDefs] = useState( [] )
@@ -106,6 +109,11 @@ const ListView = (props) => {
 
     let history = useHistory()
 
+    function goFilter() {
+      let encoded = encodeURIComponent(filter)
+      history.push(`/table/${props.table}?query=${encoded}`)
+    }
+
     return (
       <>
         <h3>{tableLabel} ( {props.table} )</h3>
@@ -116,10 +124,30 @@ const ListView = (props) => {
           New {tableLabel}
         </Button>   
 
+        <br/>
+
+        <div style={{marginTop:"2em", marginBottom:"3em"}} >
+
+          <TextField  label="Filter"                         
+                      variant="standard" 
+                      style={{marginRight:"2em",width:"30em"}} 
+                      onChange={(e) => {
+                              setFilter(e.target.value)
+                      }} />  
+
+          <Button variant="contained" style={{verticalAlign:"bottom"}} onClick={() => {
+            goFilter()
+          }}>
+            Go!
+          </Button>   
+
+          </div>
+
+
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
 
-              <TableHead sx={{ '& .MuiTableCell-head': {backgroundColor: '#01579B'}}}>
+              <TableHead sx={{ '& .MuiTableCell-head': {backgroundColor: '#01579b'}, '& .MuiTableCell-root': {backgroundColor: '#01579B'}}}>
                 <TableRow>
                   <StyledTableCell></StyledTableCell>
                   <StyledTableCell></StyledTableCell>

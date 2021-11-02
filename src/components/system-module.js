@@ -8,9 +8,10 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { selector as appSelector, appMsg } from '../app/slice'
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -49,6 +50,8 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 }));
 
 export default function SystemModule() {
+  const appState = useSelector( appSelector )
+
   const [expanded, setExpanded] = React.useState('panel1');
   const [tables, setTables] = useState([])
 
@@ -68,9 +71,14 @@ export default function SystemModule() {
             
             setTables(tables)
         } )
-        .catch(console.log)
-        // todo dialog box here
-  }, [] )
+        .catch((err) => {
+          const msg = `failed to get schema information, see console for more details`
+          console.log('****************** ' + msg)
+          console.log('****************** ' + err)
+          appMsg("error", msg, dispatch)
+      })
+
+  }, [ appState.schemeRefreshFlag_count ] )
 
   function renderTables() { 
     return tables.map( ({table, tableLabel}) => {

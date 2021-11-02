@@ -2,8 +2,8 @@
 import axios from 'axios'
 import {appMsg} from '../app/slice'
 
-// cb( { ...record } ).v1.api_getTableById
-const api_getTableById = (table, id, dispatch, cb) => {
+// cb( { ...row } ).v1.api_getRowById
+export default function api_getRowById(table, id, dispatch, cb) {
 
     axios.get( `http://localhost:8000/table/${table}/${id}` )
     .then( (res) => {
@@ -17,4 +17,3 @@ const api_getTableById = (table, id, dispatch, cb) => {
     })
 }
 
-export default api_getTableById

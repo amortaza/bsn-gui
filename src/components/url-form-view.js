@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 
 import { useParams } from 'react-router'
 
-import api_getTableById from '../api/get_table_by_id'
+import api_getRowById from '../api/get_row_by_id'
 
 import FormView from './form-view'
 
@@ -24,7 +24,7 @@ export default function UrlFormView (props) {
         if (id == 'new') return
 
         // cb( { ...record } ).v1
-        api_getTableById( table, id, dispatch, (record) => {
+        api_getRowById( table, id, dispatch, (record) => {
             setRecordData( record )
         })
 

@@ -1,17 +1,20 @@
 /* eslint-disable */
 import React, {useEffect, useState} from 'react'
 import { useDispatch } from 'react-redux'
-
+import queryString from 'query-string'
 import { useParams } from 'react-router'
-import api_getTableByQuery from '../api/get_table_by_query'
+import { useLocation } from 'react-router-dom'
+import api_getRowsByQuery from '../api/get_rows_by_query'
 
 import ListView from './list-view'
 
 /*
-params.table
+props.table
+
 */
 
-const UrlListView = () => {
+const UrlListView = (props) => {
+    const location = useLocation()    
 
     let { table } = useParams()
 
@@ -19,7 +22,9 @@ const UrlListView = () => {
     const [totalCount, setTotalCount] = useState( 0 )
 
     const [pageIndex, setPageIndex] = useState(0)
-    const [pageSize, setPageSize] = useState(5)
+    const [pageSize, setPageSize] = useState(5) 
+
+    // const [query, setQuery] = useState('')
 
     const dispatch = useDispatch()
 
@@ -30,14 +35,26 @@ const UrlListView = () => {
 
     useEffect( () => {
 
-        // table, pageIndex, pageSize, cb( rows, totalCount ).v1
-        api_getTableByQuery( table, pageIndex, pageSize, dispatch, (rows, total) => {  
-            //console.log('****************** ' + pageIndex + ' ' + pageSize + ' / ' + JSON.stringify(rows))          
-            setRecs( rows )
-            setTotalCount(total)
-        })
+        let t = queryString.parse(location.search)
+        
+        // t.query can be undefined...hence the empty string
+        const query = t.query || ''
 
-    }, [ table, pageIndex, pageSize ] )
+        // table, pageIndex, pageSize, dispatch, cb( rows, totalCount ), filter, query.v3.api_getRowsByQuery
+        api_getRowsByQuery( 
+            table, 
+            pageIndex, pageSize, 
+            dispatch, 
+            (rows, total) => {  
+                //console.log('****************** ' + pageIndex + ' ' + pageSize + ' / ' + JSON.stringify(rows))          
+                setRecs( rows )
+                setTotalCount(total)
+            },
+            null,
+            query
+        )
+
+    }, [ table, pageIndex, pageSize, location.search ] )
 
     return (
         <ListView 
