@@ -2,16 +2,23 @@
 import axios from 'axios'
 import {appMsg} from '../app/slice'
 
-// table, pageIndex, pageSize, dispatch, cb( rows, totalCount ), filter, query.v3.api_getRowsByQuery
+// table, pageIndex, pageSize, dispatch, cb( rows, totalCount ), filter, query, orderBy, orderByDesc.v4.api_getRowsByQuery
 export default function api_getRowsByQuery(
     table, 
     pageIndex, pageSize, 
     dispatch, 
     cb, 
     filter,
-    query ) {
+    query,
+    orderBy,
+    orderByDesc ) {
 
-    axios.get( `http://localhost:8000/table/${table}?index=${pageIndex}&size=${pageSize}&query=${query}` )
+    // we dont want 'undefined' appearing everywhere, now do we?    
+    query = query || ''
+    orderBy = orderBy || ''
+    orderByDesc = orderByDesc || ''
+
+    axios.get( `http://localhost:8000/table/${table}?index=${pageIndex}&size=${pageSize}&query=${query}&order_by=${orderBy}&order_by_desc=${orderByDesc}` )
     .then( (res) => {
         let data = res.data
 

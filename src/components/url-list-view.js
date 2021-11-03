@@ -39,19 +39,22 @@ const UrlListView = (props) => {
         
         // t.query can be undefined...hence the empty string
         const query = t.query || ''
+        const orderBy = t.order_by || ''
+        const orderByDesc = t.order_by_desc || ''
 
-        // table, pageIndex, pageSize, dispatch, cb( rows, totalCount ), filter, query.v3.api_getRowsByQuery
+        // table, pageIndex, pageSize, dispatch, cb( rows, totalCount ), filter, query, orderBy, orderByDesc.v4.api_getRowsByQuery
         api_getRowsByQuery( 
             table, 
             pageIndex, pageSize, 
             dispatch, 
             (rows, total) => {  
-                //console.log('****************** ' + pageIndex + ' ' + pageSize + ' / ' + JSON.stringify(rows))          
                 setRecs( rows )
                 setTotalCount(total)
             },
             null,
-            query
+            query,
+            orderBy,
+            orderByDesc
         )
 
     }, [ table, pageIndex, pageSize, location.search ] )

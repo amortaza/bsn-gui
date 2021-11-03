@@ -43,7 +43,7 @@ const DictionaryForm = (props) => {
                 setFields(fields)
             })
 
-            // table, pageIndex, pageSize, dispatch, cb( rows, totalCount ), filter, query.v3.api_getRowsByQuery
+            // table, pageIndex, pageSize, dispatch, cb( rows, totalCount ), filter, query, orderBy, orderByDesc.v4.api_getRowsByQuery
             api_getRowsByQuery('x_schema',0, 10000, dispatch, (rows) => {
                 setTableLabel( rows[0].x_label )
             },
