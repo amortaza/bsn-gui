@@ -143,6 +143,13 @@ const ListView = (props) => {
 
           </div>
 
+          <div style={{marginBottom:"2em"}}>
+          {props.children}
+          </div>
+
+
+          <Pagination setListPagination={props.setListPagination} total={props.total} />
+
 
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -186,9 +193,7 @@ const ListView = (props) => {
 
             </Table>
 
-        </TableContainer>
-
-        <Pagination setListPagination={props.setListPagination} total={props.total} />
+        </TableContainer>        
       </>
     )
 }

@@ -18,7 +18,22 @@ export default function api_getRowsByQuery(
     orderBy = orderBy || ''
     orderByDesc = orderByDesc || ''
 
-    axios.get( `http://localhost:8000/table/${table}?index=${pageIndex}&size=${pageSize}&query=${query}&order_by=${orderBy}&order_by_desc=${orderByDesc}` )
+    let url = `http://localhost:8000/table/${table}?nop=`
+
+    pageIndex = parseInt(pageIndex)
+    pageSize = parseInt(pageSize)
+
+    if (!isNaN(pageIndex) && !isNaN(pageSize)) {
+        const rowIndex = pageIndex * pageSize
+        url += `&index=${rowIndex}`
+        url += `&size=${pageSize}`
+    }
+
+    query != '' && (url += `&query=${query}`)
+    orderBy != '' && (url += `&order_by=${orderBy}`)
+    orderByDesc != '' && (url += `&order_by_desc=${orderByDesc}`)
+
+    axios.get( url )
     .then( (res) => {
         let data = res.data
 

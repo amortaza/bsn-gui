@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom'
 import api_getRowsByQuery from '../api/get_rows_by_query'
 
 import ListView from './list-view'
+import { Chip } from '@mui/material'
 
 /*
 props.table
@@ -23,8 +24,9 @@ const UrlListView = (props) => {
 
     const [pageIndex, setPageIndex] = useState(0)
     const [pageSize, setPageSize] = useState(5) 
-
-    // const [query, setQuery] = useState('')
+    const [query, setQuery] = useState('') 
+    const [orderBy, setOrderBy] = useState('') 
+    const [orderByDesc, setOrderByDesc] = useState('') 
 
     const dispatch = useDispatch()
 
@@ -33,14 +35,62 @@ const UrlListView = (props) => {
         setPageSize( size )
     }
 
+    function setFilterQuery(query) {
+        setQuery(query)
+    }
+
+    function setOrdering( orderBy, desc) {
+        setOrderBy('')
+        setOrderByDesc('')
+
+        if (desc) {
+            setOrderByDesc(orderBy)
+        } else {
+            setOrderBy(orderBy)
+        }
+    }
+
     useEffect( () => {
 
         let t = queryString.parse(location.search)
+
+        if ('query' in t) {
+            setQuery(t.query || '')
+        }
         
-        // t.query can be undefined...hence the empty string
-        const query = t.query || ''
-        const orderBy = t.order_by || ''
-        const orderByDesc = t.order_by_desc || ''
+        if ('order_by' in t) {
+            setOrderBy(t.order_by || '')
+        }
+
+        if ('order_by_desc' in t) {
+            setOrderByDesc(t.order_by_desc || '')
+        }
+
+        if ('index' in t) {
+            const pageIndex = t.index || ''
+
+            let index = parseInt(pageIndex, 10)
+            if (isNaN(index)) {
+                index = 0
+            }
+
+            setPageIndex( index )
+        }
+
+        if ('size' in t) {
+            const pageSize = t.size || ''
+
+            let size = parseInt(pageSize, 10)
+            if (isNaN(size)) {
+                size = 0
+            }
+
+            setPageSize( size )
+        }
+
+    }, [ location.search ] )
+
+    useEffect( () => {
 
         // table, pageIndex, pageSize, dispatch, cb( rows, totalCount ), filter, query, orderBy, orderByDesc.v4.api_getRowsByQuery
         api_getRowsByQuery( 
@@ -57,15 +107,26 @@ const UrlListView = (props) => {
             orderByDesc
         )
 
-    }, [ table, pageIndex, pageSize, location.search ] )
+    }, [ table, pageIndex, pageSize, query, orderBy, orderByDesc ] )
 
     return (
+        <>
+
+        
+
         <ListView 
             table={table} 
             recs={recs} 
             total={totalCount}
             setListPagination={setListPagination}
-        />
+        >
+            <Chip label={`Page-Index: ${pageIndex}`} />
+            <Chip label={`Page-Size: ${pageSize}`} />
+            <Chip label={`Order-By: ${orderBy}`} />
+            <Chip label={`Order-By-Desc: ${orderByDesc}`} />
+            <Chip label={`Query: ${query}`} />
+        </ListView>
+        </>
     )
 }
 
