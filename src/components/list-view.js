@@ -13,13 +13,14 @@ import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import { Link, useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-
+import ArrowCircleDownTwoToneIcon from '@mui/icons-material/ArrowCircleDownTwoTone';
+import ArrowCircleUpTwoToneIcon from '@mui/icons-material/ArrowCircleUpTwoTone';
 import api_getTableFields from '../api/get_table_fields'
 
 import Pagination from './pagination'
 
 import api_deleteRecord from 'src/api/delete_record';
-import { Chip, TextField } from '@mui/material';
+import { Chip, IconButton, TextField } from '@mui/material';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -66,16 +67,25 @@ const ListView = (props) => {
     // headerDefs = [ {field, label} ... ].v1
     const [headerDefs, setHeaderDefs] = useState( [] )
 
-    // {field: {orderByDir: '', 'asc', 'desc'} }
-    const [headerState, setHeaderState] = useState( {} )
+    const [orderByField, setOrderByField] = useState( '' )
+    const [orderByDir, setOrderByDir] = useState( 'asc' )
 
     const dispatch = useDispatch()
 
-    useEffect(() => {
+    let history = useHistory()
 
-    }, [])
+    useEffect(() => {
+      setOrderByField( props.orderBy || props.orderByDesc )
+
+      if (props.orderBy)
+        setOrderByDir('asc')
+      else
+        setOrderByDir('desc')
+
+    }, [props.orderBy, props.orderByDesc])
+
     function urlFromState() {
-      let url = `http://localhost:3000/table/${props.table}?nop=`
+      let url = `/table/${props.table}?nop=`
       
       let i = parseInt( props.pageIndex )
       if (!isNaN(i)) {
@@ -92,47 +102,37 @@ const ListView = (props) => {
         url += `&query=${encoded}`
       }
       
-      if (props.orderBy) {
-        url += `&order_by=${props.orderBy}`  
+      if (orderByField && orderByDir == 'asc') {
+        url += `&order_by=${orderByField}`  
       }
 
-      if (props.orderByDesc) {
-        url += `&order_by_desc=${props.orderByDesc}`
+      if (orderByField && orderByDir == 'desc') {
+        url += `&order_by_desc=${orderByField}`
       }
 
-      console.log('>>> ' + url.substring(35))
+      return url
     }
 
     function onOrderBy(field) {
-
-      let localHeaderState = {
-        ...headerState
+      if (field == orderByField) {
+        if (orderByDir == 'asc') {
+          setOrderByDir('desc')
+        } else {
+          setOrderByDir('asc')
+        }
+      } else {
+        setOrderByDir('desc')
       }
 
-      if (! (field in localHeaderState)) {
-        localHeaderState[ field ] = { orderByDir: ''}
-      }
-
-      let state = {...localHeaderState[ field ]}
-      let orderByDir = state.orderByDir
-
-      if (orderByDir == '') {
-        orderByDir = "asc"
-       } else if (orderByDir == 'asc') {
-         orderByDir = "desc"
-       } else {
-         orderByDir = ''
-       }
-
-       localHeaderState[ field ].orderByDir = orderByDir
-
-       setHeaderState( localHeaderState )
+      setOrderByField( field )
     }
 
     useEffect(() => {
-      urlFromState()
+      let url = urlFromState()
 
-    },[headerState])
+      history.push(url)
+
+    },[orderByField, orderByDir])
 
     function deleteRecord(table, id) { 
 
@@ -158,19 +158,13 @@ const ListView = (props) => {
       // cb( fields [] {name, type, label, schema_type} ) api_getTableFields.v1
       api_getTableFields( props.table, dispatch, (fields) => {
         
-        let headerState = {}
-
         for ( let i = 0; i < fields.length; i++) {
           let field = fields[ i ]
 
           if ( field.schema_type == 'relation' ) {
             setTableLabel( field.label )
-          } else {
-            headerState[ field.name ] = { orderByDir: '' }
-          }
+          } 
         }
-
-        setHeaderState( headerState )
 
         fields = fields.filter( ({schema_type}) => {
           return schema_type != 'relation'
@@ -183,12 +177,43 @@ const ListView = (props) => {
       })
     }, [props.table])
 
-    let history = useHistory()
+    
 
     function goFilter() {
       let encoded = encodeURIComponent(filter)
       history.push(`/table/${props.table}?query=${encoded}`)
     }
+
+    let headerDefs_component = headerDefs.map( headerDef => {
+
+      let desc = orderByDir == 'desc'
+      let icon
+
+      if ( orderByField == headerDef.field) {
+        if (desc) {
+          icon = <ArrowCircleDownTwoToneIcon  />
+        } else {
+          icon = <ArrowCircleUpTwoToneIcon  />
+        }        
+      }
+
+      return (
+        <StyledTableCell key={headerDef.label}>
+
+          <IconButton color="success" style={{fontSize:"1.15em"}} onClick={() => {
+            onOrderBy( headerDef.field)
+          }}>
+            <div style={{marginRight:"0.5em"}}>
+              {headerDef.label}
+            </div> 
+            <div>{icon}</div>
+          </IconButton>
+
+
+        </StyledTableCell>
+      )
+      
+      }) 
 
     return (
       <>
@@ -241,14 +266,7 @@ const ListView = (props) => {
 
 
 
-
-                  {headerDefs.map( (headerDef) => (
-                    <StyledTableCell key={headerDef.label}>
-                      <Button variant="text" color="success" onClick={() => {
-                        onOrderBy( headerDef.field)
-                      }}>({headerState[headerDef.field].orderByDir}) {headerDef.label}</Button>
-                    </StyledTableCell>
-                  ) ) }
+                  {headerDefs_component}
 
 
 

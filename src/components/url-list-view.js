@@ -60,10 +60,18 @@ const UrlListView = (props) => {
         
         if ('order_by' in t) {
             setOrderBy(t.order_by || '')
+
+            if (t.order_by) {
+                setOrderByDesc('')
+            }
         }
 
         if ('order_by_desc' in t) {
             setOrderByDesc(t.order_by_desc || '')
+
+            if (t.order_by_desc) {
+                setOrderBy('')
+            }
         }
 
         if ('index' in t) {
