@@ -19,16 +19,15 @@ import api_getTableFields from '../api/get_table_fields'
 import Pagination from './pagination'
 
 import api_deleteRecord from 'src/api/delete_record';
-import { appMsg } from 'src/app/slice';
-import { TextField } from '@mui/material';
+import { Chip, TextField } from '@mui/material';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
+    backgroundColor: "#e3f0f3",
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: "1em",
   },
 }));
 
@@ -49,6 +48,10 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     props.pageIndex
     props.pageSize
 
+    props.query* for view only
+    props.orderBy* for view only
+    props.orderByDesc* for view only
+
     props.total
 
     props.setListPagination( index, size )
@@ -63,7 +66,73 @@ const ListView = (props) => {
     // headerDefs = [ {field, label} ... ].v1
     const [headerDefs, setHeaderDefs] = useState( [] )
 
+    // {field: {orderByDir: '', 'asc', 'desc'} }
+    const [headerState, setHeaderState] = useState( {} )
+
     const dispatch = useDispatch()
+
+    useEffect(() => {
+
+    }, [])
+    function urlFromState() {
+      let url = `http://localhost:3000/table/${props.table}?nop=`
+      
+      let i = parseInt( props.pageIndex )
+      if (!isNaN(i)) {
+        url += `index=${i}`
+      }
+
+      i = parseInt( props.pageSize )
+      if (!isNaN(i)) {
+        url += `size=${i}`
+      }
+
+      if (props.query) {
+        let encoded = encodeURIComponent(props.query)
+        url += `&query=${encoded}`
+      }
+      
+      if (props.orderBy) {
+        url += `&order_by=${props.orderBy}`  
+      }
+
+      if (props.orderByDesc) {
+        url += `&order_by_desc=${props.orderByDesc}`
+      }
+
+      console.log('>>> ' + url.substring(35))
+    }
+
+    function onOrderBy(field) {
+
+      let localHeaderState = {
+        ...headerState
+      }
+
+      if (! (field in localHeaderState)) {
+        localHeaderState[ field ] = { orderByDir: ''}
+      }
+
+      let state = {...localHeaderState[ field ]}
+      let orderByDir = state.orderByDir
+
+      if (orderByDir == '') {
+        orderByDir = "asc"
+       } else if (orderByDir == 'asc') {
+         orderByDir = "desc"
+       } else {
+         orderByDir = ''
+       }
+
+       localHeaderState[ field ].orderByDir = orderByDir
+
+       setHeaderState( localHeaderState )
+    }
+
+    useEffect(() => {
+      urlFromState()
+
+    },[headerState])
 
     function deleteRecord(table, id) { 
 
@@ -89,12 +158,19 @@ const ListView = (props) => {
       // cb( fields [] {name, type, label, schema_type} ) api_getTableFields.v1
       api_getTableFields( props.table, dispatch, (fields) => {
         
+        let headerState = {}
+
         for ( let i = 0; i < fields.length; i++) {
-          if (fields[i].schema_type == 'relation') {            
-            setTableLabel( fields[i].label )
-            break
+          let field = fields[ i ]
+
+          if ( field.schema_type == 'relation' ) {
+            setTableLabel( field.label )
+          } else {
+            headerState[ field.name ] = { orderByDir: '' }
           }
         }
+
+        setHeaderState( headerState )
 
         fields = fields.filter( ({schema_type}) => {
           return schema_type != 'relation'
@@ -144,7 +220,11 @@ const ListView = (props) => {
           </div>
 
           <div style={{marginBottom:"2em"}}>
-          {props.children}
+            <Chip label={`Page-Index: ${props.pageIndex}`} />
+            <Chip label={`Page-Size: ${props.pageSize}`} />
+            <Chip label={`Order-By: ${props.orderBy}`} />
+            <Chip label={`Order-By-Desc: ${props.orderByDesc}`} />
+            <Chip label={`Query: ${props.query}`} />
           </div>
 
 
@@ -154,14 +234,26 @@ const ListView = (props) => {
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
 
-              <TableHead sx={{ '& .MuiTableCell-head': {backgroundColor: '#01579b'}, '& .MuiTableCell-root': {backgroundColor: '#01579B'}}}>
+              <TableHead>
                 <TableRow>
                   <StyledTableCell></StyledTableCell>
                   <StyledTableCell></StyledTableCell>
 
+
+
+
                   {headerDefs.map( (headerDef) => (
-                    <StyledTableCell key={headerDef.label}>{headerDef.label}</StyledTableCell>
+                    <StyledTableCell key={headerDef.label}>
+                      <Button variant="text" color="success" onClick={() => {
+                        onOrderBy( headerDef.field)
+                      }}>({headerState[headerDef.field].orderByDir}) {headerDef.label}</Button>
+                    </StyledTableCell>
                   ) ) }
+
+
+
+
+
                 </TableRow>
               </TableHead>
 

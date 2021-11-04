@@ -111,21 +111,17 @@ const UrlListView = (props) => {
 
     return (
         <>
-
-        
-
         <ListView 
             table={table} 
             recs={recs} 
             total={totalCount}
             setListPagination={setListPagination}
-        >
-            <Chip label={`Page-Index: ${pageIndex}`} />
-            <Chip label={`Page-Size: ${pageSize}`} />
-            <Chip label={`Order-By: ${orderBy}`} />
-            <Chip label={`Order-By-Desc: ${orderByDesc}`} />
-            <Chip label={`Query: ${query}`} />
-        </ListView>
+            pageIndex={pageIndex}
+            pageSize={pageSize}
+            query={query}
+            orderBy={orderBy}
+            orderByDesc={orderByDesc}
+        />
         </>
     )
 }
