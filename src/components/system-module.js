@@ -101,12 +101,12 @@ export default function SystemModule() {
         <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
           
           <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-            <Typography>System</Typography>
+            <Typography>system</Typography>
           </AccordionSummary>
 
           <AccordionDetails key="dictionary">
             <Link to={`/schema`} style={{ color: 'inherit', textDecoration: 'none' }}>
-              <div style={{ paddingLeft: 13 }}>Dictionary</div>
+              <div style={{ paddingLeft: 13 }}>view schema</div>
             </Link>
           </AccordionDetails>
 
@@ -115,7 +115,7 @@ export default function SystemModule() {
         <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
 
           <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-            <Typography>Tables</Typography>
+            <Typography>view table data</Typography>
           </AccordionSummary>
 
           {renderTables()}

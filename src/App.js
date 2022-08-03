@@ -56,6 +56,12 @@ function App() {
 
       <Header />
 
+      <Switch>
+        <Route path="/login">
+        <About />
+        </Route>
+      </Switch>
+
       <Split className="split" sizes={[20,80]}>
      
       <div>   

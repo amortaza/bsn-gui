@@ -71,7 +71,7 @@ export default function DictionaryView() {
 
     return (
         <>
-            <h2>Dictionary</h2>
+            <h2>Schema</h2>
 
             <div style={{marginTop:"1em", marginBottom:"3em"}}>
                 {/* New Button */}

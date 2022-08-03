@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   schemeRefreshFlag_count: 0,
+  isUserAuth: false,
   alert: {
     type: 'info', // info, warning, error, success
     msg: ''

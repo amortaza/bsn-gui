@@ -47,10 +47,11 @@ const FormView = (props) => {
 
             for (let i = 0;i < fields.length; i++) {
                 let f = fields[i]
-                map[f.name] = f.label
 
                 if (f.schema_type == 'relation') {
                     setTableLabel(f.label)
+                } else {
+                    map[f.name] = f.label    
                 }
 
                 emptyRec[ f.name ] = ''
